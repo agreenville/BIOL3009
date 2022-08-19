@@ -1,16 +1,16 @@
-################################################################################
-# BIOL3007 camera trap data from Google Sheets to CamTrapR
+#*****************************************************************************##
+# BIOL3007 camera trap data from Google Sheets to CamTrapR ####
 # 
 # 
 # Aaron Greenville Aug 2022
-################################################################################
+#*****************************************************************************##
 
-#### Load packages ####
+## Load packages ####
 library(camtrapR)
 library(tidyverse)
 library(janitor)
 
-# Load camera data ####
+## Load camera data ####
 # Note data for each site combined into one csv file after cleaning up each coln
 
 
@@ -39,7 +39,8 @@ cam.d <- cam[!duplicated(cam[c('DateTimeOriginal', 'species',
 
 str(cam.d)
 
-# Apply an independence rule. Here we use 5 min
+## Apply an independence rule ####
+# Here we use 5 min
 # internal function in CampTrapR package. Notice the 3 colons.
 records_filter5_min <- camtrapR:::assessTemporalIndependence(intable = cam.d,
                                       deltaTimeComparedTo = "lastIndependentRecord",  
@@ -58,20 +59,20 @@ records_filter5_min$DateTimeOriginal <- as.factor(records_filter5_min$DateTimeOr
 
 
 
-### Save records ####
+## Save records ####
 write.csv(records_filter5_min,"data/BIOL3009_Allsites_2022_5min_data.csv",
           row.names = FALSE)
 
 #saveRDS(records_filter5_min, "data/BIOL3009_site1_5min_data.rds")
 
 #*******************************************************************#
-#* Exploring the data: examples of diel activity
+# Exploring the data: examples of diel activity ####
 #* *****************************************************************#
 
-# What species are detected
+## What species are detected ####
 unique(cam$species)
 
-# Activity 
+## Activity #### 
 activityDensity(recordTable = records_filter5_min,
                 speciesCol = "species",
                 allSpecies  = TRUE,
