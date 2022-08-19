@@ -1,5 +1,5 @@
 ################################################################################
-# BIOL3007 workflow to CamTrapR
+# BIOL3007 camera trap data from Google Sheets to CamTrapR
 # 
 # 
 # Aaron Greenville Aug 2022
@@ -8,61 +8,72 @@
 #### Load packages ####
 library(camtrapR)
 library(tidyverse)
-
+library(janitor)
 
 # Load camera data ####
-cam <- read.csv("data/Dungog Camera Data 2022-data-entry_site1.csv  ", header = TRUE)
+# Note data for each site combined into one csv file after cleaning up each coln
+
+
+cam <- read.csv("data/sites/All_cam_sites.csv", header = TRUE)
 
 # create unique camera station id and combined date/time coln
 cam <- cam %>%
-  mutate(CamId = str_c(Site,Trap.Location, sep = "_" )) %>%
-  mutate(DateTime = str_c(Date, Time, sep = " " ))
+  clean_names() %>%
+  mutate(CamId = str_c(site, trap_location, sep = "_" )) %>%
+  mutate(DateTime = str_c(date, time, sep = " " ))
 
 # create DateTimeOrginal column in proper format for function
 cam$DateTimeOriginal <- strptime(cam$DateTime, format =
-                                          "%d/%m/%Y %H:%M", tz = "UTC")
+                                          "%d/%m/%Y %H:%M:%S", tz = "UTC")
 
 str(cam)
 
-### to do - add camera gps points
-
-# Load camera station/deployments  ####
-# stations <- read.csv("data/wildlife-insights_BMCC_test_data/wildlife-insights_e957eae5-e680-48f5-9704-a1cc75abc2d1_project-2002996_data/deployments.csv", header = TRUE)
-
-# join station locations with effort
-# cam.stations <- left_join(cam, stations, by="deployment_id")
 
 
+# Need to remove records taken at the same time of same species and location
+# Reconyx rapidfire cameras can take photos quick enough that they
+# can have the same time stamp or students don't enter seconds
+cam.d <- cam[!duplicated(cam[c('DateTimeOriginal', 'species',
+                                                    'site',
+                                                    'CamId' ) ]), ] 
+
+str(cam.d)
+
+# Apply an independence rule. Here we use 5 min
 # internal function in CampTrapR package. Notice the 3 colons.
-records_filter5_min <- camtrapR:::assessTemporalIndependence(intable = cam,
+records_filter5_min <- camtrapR:::assessTemporalIndependence(intable = cam.d,
                                       deltaTimeComparedTo = "lastIndependentRecord",  
-                                      columnOfInterest = "Species",
-                                      stationCol = "CamId", # to change to site
+                                      columnOfInterest = "species",
+                                      stationCol = "site", # site
                                       cameraCol = "CamId", # individual camera location
-                                      camerasIndependent = TRUE,
-                                      minDeltaTime = 5
+                                      camerasIndependent = TRUE, # Setting cameras as independent of each other, but are they?
+                                      minDeltaTime = 5    # Independence rule set to 5 min.
                                       )
+
 # check structure
 str(records_filter5_min)
 
 # convert date to a factor for data exploration below
 records_filter5_min$DateTimeOriginal <- as.factor(records_filter5_min$DateTimeOriginal)
 
-# What species are detected
-unique(cam$Species)
+
 
 ### Save records ####
-write.csv(records_filter5_min,"data/BIOL3009_site1_5min_data.csv",
+write.csv(records_filter5_min,"data/BIOL3009_Allsites_2022_5min_data.csv",
           row.names = FALSE)
 
 #saveRDS(records_filter5_min, "data/BIOL3009_site1_5min_data.rds")
 
 #*******************************************************************#
-#* Exploring the data
+#* Exploring the data: examples of diel activity
 #* *****************************************************************#
 
+# What species are detected
+unique(cam$species)
 
-act.site1 <- activityDensity(recordTable = records_filter5_min,
+# Activity 
+activityDensity(recordTable = records_filter5_min,
+                speciesCol = "species",
                 allSpecies  = TRUE,
                 writePNG    = FALSE,
                 plotR       = TRUE,
@@ -70,7 +81,17 @@ act.site1 <- activityDensity(recordTable = records_filter5_min,
                 recordDateTimeFormat = "ymd HMS",
                 add.rug     = TRUE)
 
-activityOverlap (recordTable = records_filter5_min,
+activityRadial(recordTable = records_filter5_min,
+                speciesCol = "species",
+                allSpecies  = TRUE,
+                writePNG    = FALSE,
+                plotR       = TRUE,
+                recordDateTimeCol = "DateTimeOriginal",
+                recordDateTimeFormat = "ymd HMS",
+                add.rug     = TRUE)
+
+activityOverlap(recordTable = records_filter5_min,
+                speciesCol = "species",
                  speciesA    = "Rattus fuscipes",    
                  speciesB    = "Antechinus stuartii",  
                  legendPosition = "top",
@@ -78,24 +99,4 @@ activityOverlap (recordTable = records_filter5_min,
                  plotR       = TRUE
 )
 
-## to do
-Maps <- detectionMaps(CTtable = stations,
-                          recordTable = records_filter5_min,
-                          Xcol = "longitude",
-                          Ycol = "latitude",
-                          #speciesToShow = "Swamp Wallaby",
-                          stationCol = "deployment_id",
-                          speciesCol = "common_name",
-                          # backgroundPolygon =tm_polygons("HPI")  , # need good polygon
-                          writePNG = FALSE,
-                          plotR = TRUE,
-                          printLabels = FALSE,
-                          richnessPlot = TRUE,
-                          addLegend = TRUE,
-                          writeShapefile = FALSE,
-                          speciesPlots = TRUE,
-                          shapefileName = "BMCC_Species",
-                          shapefileDirectory = "output/",	
-                          shapefileProjection	="+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs"
-  ) 
 
