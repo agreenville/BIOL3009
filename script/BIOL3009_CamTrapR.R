@@ -1,5 +1,5 @@
 #*****************************************************************************##
-# BIOL3007 camera trap data from Google Sheets to CamTrapR ####
+# BIOL3009 camera trap data from Google Sheets to CamTrapR ####
 # 
 # 
 # Aaron Greenville Aug 2022
