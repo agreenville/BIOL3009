@@ -57,10 +57,18 @@ str(records_filter5_min)
 # convert date to a factor for data exploration below
 records_filter5_min$DateTimeOriginal <- as.factor(records_filter5_min$DateTimeOriginal)
 
+# filter for current year's records
+records_filter5_min.2022 <- records_filter5_min %>%
+  filter(between(as.Date(DateTimeOriginal), as.Date("2022-01-01"),
+                 as.Date("2022-12-31")))
 
+str(records_filter5_min.2022)
 
 ## Save records ####
 write.csv(records_filter5_min,"data/BIOL3009_Allsites_2022_5min_data.csv",
+          row.names = FALSE)
+
+write.csv(records_filter5_min.2022,"data/BIOL3009_Allsites_yr2022_5min_data.csv",
           row.names = FALSE)
 
 #saveRDS(records_filter5_min, "data/BIOL3009_site1_5min_data.rds")
@@ -73,10 +81,11 @@ write.csv(records_filter5_min,"data/BIOL3009_Allsites_2022_5min_data.csv",
 unique(cam$species)
 
 ## Activity #### 
-activityDensity(recordTable = records_filter5_min,
+activityDensity(recordTable = records_filter5_min.2022,
                 speciesCol = "species",
                 allSpecies  = TRUE,
                 writePNG    = FALSE,
+                plotDirectory = "output/",
                 plotR       = TRUE,
                 recordDateTimeCol = "DateTimeOriginal",
                 recordDateTimeFormat = "ymd HMS",
@@ -91,13 +100,13 @@ activityRadial(recordTable = records_filter5_min,
                 recordDateTimeFormat = "ymd HMS",
                 add.rug     = TRUE)
 
-activityOverlap(recordTable = records_filter5_min,
+activityOverlap(recordTable = records_filter5_min.2022,
                 speciesCol = "species",
                  speciesA    = "Rattus fuscipes",    
                  speciesB    = "Antechinus stuartii",  
                  legendPosition = "top",
                  writePNG    = FALSE,
-                 plotR       = TRUE
-)
+                plotDirectory = "output/",
+                 plotR       = TRUE)
 
 
