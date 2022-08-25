@@ -78,7 +78,7 @@ write.csv(records_filter5_min.2022,"data/BIOL3009_Allsites_yr2022_5min_data.csv"
 #* *****************************************************************#
 
 ## What species are detected ####
-unique(cam$species)
+unique(records_filter5_min.2022$species)
 
 ## Activity #### 
 activityDensity(recordTable = records_filter5_min.2022,
