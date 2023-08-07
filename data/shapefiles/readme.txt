@@ -1,0 +1,1 @@
+Place to save shapefiles exported from camTrapR
