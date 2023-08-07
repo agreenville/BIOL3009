@@ -207,7 +207,7 @@ activityOverlap(recordTable = records_filter5_min, # change to current dataset
                 plotR       = TRUE)
 
 #****************************************************************#
-# Exploring the data: number of images per site ####
+# Exploring the data: number of images per site #### to finish
 #****************************************************************#
 
 #library(scales)
