@@ -2,7 +2,7 @@
 # Wildlife Insights workflow to CamTrapR
 #    Example script
 # 
-# Aaron Greenville Aug 2022; update Jul 2023
+# Aaron Greenville Aug 2022; update Aug 2023
 #********************************************************************#
 
 # Load packages ####
@@ -12,6 +12,8 @@ library(lubridate)
 
 # Load data from WI ####
 ## Load camera data ####
+## Change filenames after each data download
+
 cam <- read.csv("data/wildlife-insights_BMCC_20230701_data/wildlife-insights_336007e2-fd19-45fa-b496-333668b76f0e_project-2002996_data/images.csv",
                 header = TRUE)
 ## Load camera station/deployments from WI ####
@@ -32,7 +34,7 @@ Ctable.WI <- cam.stations %>%
 
 # create DateTimeOrginal column in proper format for function
 cam.stations$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, format =
-                                                       "%Y-%m-%d %H:%M:%S", tz = "UTC")) #tz = "Australia/Sydney")
+                                                       "%Y-%m-%d %H:%M:%S", tz = "UTC")) 
 
 # Generate species record table with 'independent' records ####
 # Rule here is 5 min
@@ -139,100 +141,23 @@ effort <- camop_op %>% #
   rownames_to_column("placename") %>%
   rename(., days =  "." )
 
-#************************************************************************
-# Mapping camera images ####
-#* 
-#***********************************************************************
-
-library(sf)
-library(ggspatial)
-
-
-## Species list ####
-
-# # fixing species names or creating groups
-# 
-# records_filter5_min.cat <- records_filter5_min %>%
-#   mutate(common_name = replace(common_name, common_name=="Antechinus Species", "Small Mammal")) %>%
-#   mutate(common_name = replace(common_name, common_name=="Strepera Species", "Grey Currawong")) %>%
-#   mutate(common_name = replace(common_name, common_name=="Bush Rat", "Rattus Species")) %>%
-#   mutate(common_name = replace(common_name, common_name=="Rodent", "Rattus Species")) %>%
-#   mutate(common_name = replace(common_name, common_name=="Rattus Species", "Small Mammal")) %>%
-#   mutate(common_name = replace(common_name, common_name=="Painted Bush-quail", "Painted Button-quail")) %>%
-#   filter(common_name != "Animal") %>%
-#   filter(common_name != "Mammal") %>%
-#   filter(common_name != "Diprotodontia Order") %>%
-#   filter(common_name != "Bird") %>%
-#   filter(common_name != "Kangaroo Family") %>%
-#   filter(common_name != "Domestic Dog") %>%
-#   filter(common_name != "Butterflies and Moths")
-
-
-Maps <- detectionMaps(CTtable = Ctable.WI,
-                          recordTable = records_filter5_min, # change to records_filter5_min.swift for swift BMCC
-                          Xcol = "longitude",
-                          Ycol = "latitude",
-                          #speciesToShow = "Swamp Wallaby",
-                          stationCol = "placename",
-                          speciesCol = "common_name",
-                          # backgroundPolygon =tm_polygons("HPI")  , # need good polygon
-                          writePNG = FALSE,
-                          plotR = TRUE,
-                          printLabels = TRUE,
-                          richnessPlot = TRUE,
-                          addLegend = TRUE,
-                          writeShapefile = FALSE, # change to true to export shapefile 
-                          speciesPlots = TRUE,
-                          shapefileName = "BIOL3009_Species_2023", # change filename
-                          shapefileDirectory = "data/shapefiles",	
-                          shapefileProjection	="+proj=longlat +datum=WGS84 +no_defs +type=crs"
-) 
-
-
-
-## load in shapefile exported above ####
-species.shp <-  read_sf("data/Shapefiles",
-                        "BIOL3009_Species_2023") # change to your filename
-
-# add effort
-
-species.effort.shp <- left_join(species.shp, effort, by = c("placenm" = "placename")) 
-
-## calc RAI ####
-species.effort.shp2 <- species.effort.shp %>% 
-  gather(key = "species", value = "count", # add new rows for species 2
-         -placenm, -geometry, -n_specs, -days) %>%
-  mutate(RAI = count/days*100) %>%
-  spread(key = "species", value = "RAI")
-
-
 
 #*******************************************************************#
-# Example data exploration using detection maps ####
+# Exploring the data: detection maps ####
 #******************************************************************#
 
-# ## load background shapefile (optional)
-# library(rgdal)
-# fire <- readOGR(dsn = "data/NIAFED_v20200623/NIAFED_20190701_20200622_v20200623.shp") 
-
-## Read in camera data, if saved earlier. Ignore if this is the first time.
-load(file = "data/WI_data.RData") # if needed
-
-## Load camera station/deployments from WI
-# if needed
-stations <- read.csv("data/wildlife-insights_BMCC_test_data/wildlife-insights_e957eae5-e680-48f5-9704-a1cc75abc2d1_project-2002996_data/deployments.csv", header = TRUE)
-
+## Read in camera data, if saved earlier. Ignore if already loaded from above code.
+load(file = "data/BIoL3009_WI_5min_data_2023.RData") # if needed
 
 
 ## Detection maps
-detectionMaps(CTtable = stations,
+detectionMaps(CTtable = Ctable.WI,
                           recordTable = records_filter5_min,
                           Xcol = "longitude",
                           Ycol = "latitude",
                           #speciesToShow = "Swamp Wallaby",
                           stationCol = "deployment_id",
                           speciesCol = "common_name",
-                          # backgroundPolygon = fire.crop, # comment out if you skip loading background shapefile
                           writePNG = FALSE,
                           plotR = TRUE,
                           printLabels = FALSE,
@@ -253,7 +178,7 @@ detectionMaps(CTtable = stations,
 unique(records_filter5_min.2022$species)
 
 ## Activity #### 
-activityDensity(recordTable = records_filter5_min.2023, # change to current dataset
+activityDensity(recordTable = records_filter5_min, # change to current dataset
                 speciesCol = "species",
                 allSpecies  = TRUE,
                 writePNG    = FALSE,
@@ -263,7 +188,7 @@ activityDensity(recordTable = records_filter5_min.2023, # change to current data
                 recordDateTimeFormat = "ymd HMS",
                 add.rug     = TRUE)
 
-activityRadial(recordTable = records_filter5_min.2023, # change to current dataset
+activityRadial(recordTable = records_filter5_min, # change to current dataset
                speciesCol = "species",
                allSpecies  = TRUE,
                writePNG    = FALSE,
@@ -272,7 +197,7 @@ activityRadial(recordTable = records_filter5_min.2023, # change to current datas
                recordDateTimeFormat = "ymd HMS",
                add.rug     = TRUE)
 
-activityOverlap(recordTable = records_filter5_min.2023, # change to current dataset
+activityOverlap(recordTable = records_filter5_min, # change to current dataset
                 speciesCol = "species",
                 speciesA    = "Rattus fuscipes",    
                 speciesB    = "Antechinus stuartii",  
@@ -280,4 +205,36 @@ activityOverlap(recordTable = records_filter5_min.2023, # change to current data
                 writePNG    = FALSE,
                 plotDirectory = "output/",
                 plotR       = TRUE)
+
+#****************************************************************#
+# Exploring the data: number of images per site ####
+#****************************************************************#
+
+#library(scales)
+
+# if we have unequal sampling effort across our cameras, we can standarise
+# each camera by the number of nights it was active - i.e. effort.
+
+## count up number of photos per species ####
+species.count <- records_filter5_min %>% 
+  group_by(placename, camera_name, common_name, subproject_name) %>%
+  tally()
+
+
+## add effort and calc mean and se per fire treatment ####
+
+species.count.effort <- left_join(species.count, effort, by = "placename") %>%
+  group_by(subproject_name, common_name) %>%
+  summarise_if(is.numeric, list(mean,se)) %>%
+  dplyr::select(-days_fn2) %>%
+  rename(., c(mean = "n_fn1", days =  "days_fn1", se = "n_fn2")) %>%
+  mutate(RAI = mean/days*100) %>%
+  ungroup() %>%
+  complete(nesting(subproject_name, fire_class, days), common_name, fill = list(mean = 0, se = 0, RAI = 0)) 
+
+
+
+
+
+
 
