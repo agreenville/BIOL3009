@@ -49,5 +49,4 @@ See [tutorials](https://www.wildlifeinsights.org/get-started)
 
 `handy_functions.R` - collection of handy functions in R. At present only contains function for calculating SE.
 
-### Script folder
-BIOL3009_CamTrapR.R - script to process camera trap data that is manually entered into spreadsheets.
+`BIOL3009_CamTrapR.R` - script to process camera trap data that is manually entered into spreadsheets.
