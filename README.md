@@ -1,6 +1,9 @@
 # BIOL3009
 R scripts for BIOL3009 Terrestrial Field Ecology.
 
+Below is the workflow for getting camera trap images ready and uploading to Wildlife Insights.
+
+Note: staff will have done most of these steps for you.
 
 ## 1. Fix any time errors and rename files
 
