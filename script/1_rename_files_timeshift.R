@@ -29,10 +29,10 @@ timeshift_run <- timeShiftImages(inDir                = wd_images_ID_copy,
 # 2.Changing filenames ###
 
 # define raw image location
-wd_images_raw <- file.path("E:/2022_09-2/") 
+wd_images_raw <- file.path("D:/Terrestrial Ecology Camera trap Files/BIOL3X09 Terrestrial Field Ecology/") 
 
 # define destination for renamed images
-wd_images_raw_renamed <- file.path("E:/2022_09-2-renamed/")       
+wd_images_raw_renamed <- file.path("D:/Terrestrial Ecology Camera trap Files/renamed/")       
 
 
 
