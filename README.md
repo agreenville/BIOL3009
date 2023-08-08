@@ -31,7 +31,7 @@ ii. Upload batches of photos from each camera to it's corresponding deployment.\
 iii. Fill out data tracker sheet ([link](https://docs.google.com/spreadsheets/d/16pZj3O4XxI4AVXv3wRbDPvQBViGvBTyxMURWwnEkkPc/edit?usp=sharing))
 
 Hints: 
-- Can use multiple browser tabs to upload photos.\
+- Can use multiple browser tabs to upload photos.
 - Double check deployment details before hitting upload.
 
 Add a new sheet for each deployment and fill in details for each upload. Cross-check dates and times are correct in the images.
