@@ -41,11 +41,15 @@ Add a new sheet for each deployment and fill in details for each upload. Cross-c
 
 ## 4. Tag images on Wildlife Insights
 
+This is one of the main steps that students will do. Identifying animals in the images!
+
 See [tutorials](https://www.wildlifeinsights.org/get-started)
 
 ## 5. Wildlife Insights downloads to CamTrapR
 
 `WI_CamTrapR.R` - example script to take a data export from Wildlife Insights to be compatible with the R package CamTrapR.
+
+Once all images are processed, staff will download the data from Wildlife Insights so students can use the above script to process it.
 
 ## Additional scripts
 
