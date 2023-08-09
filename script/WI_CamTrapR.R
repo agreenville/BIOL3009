@@ -18,11 +18,11 @@ library(lubridate)
 
 ## Change filenames and path to suit your data
 
-cam <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/images.csv",
+cam <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/images.csv",
                 header = TRUE)
 
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/deployments.csv", 
+stations <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/deployments.csv", 
                      header = TRUE)
  
 # join station locations with effort
