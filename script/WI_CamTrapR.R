@@ -1,31 +1,38 @@
-#********************************************************************#
-# Wildlife Insights workflow to CamTrapR
-#    Example script
-# 
-# Aaron Greenville Aug 2022; update Aug 2023
-#********************************************************************#
+########################################################################### #
+# Wildlife Insights workflow to CamTrapR                                    #
+#    Example script                                                         #
+#                                                                           #
+# Aaron Greenville Aug 2022; update Aug 2023                                #
+########################################################################### #
 
+#****************************************************************************
 # Load packages ####
+#****************************************************************************
 library(camtrapR)
 library(tidyverse)
 library(lubridate)
 
+#****************************************************************************
 # Load data from WI ####
-## Load camera data ####
-## Change filenames after each data download
+#****************************************************************************
+
+## Change filenames and path to suit your data
 
 cam <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/images.csv",
                 header = TRUE)
+
 ## Load camera station/deployments from WI ####
 stations <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/deployments.csv", 
                      header = TRUE)
  
-
 # join station locations with effort
 cam.stations <- left_join(cam, stations, by="deployment_id")
 
-## Create Ctable for camtrapR ###
-# For using data without blanks and humans        
+#****************************************************************************
+# Create Ctable for camtrapR ###
+#****************************************************************************
+# For using data without blanks and humans  
+
 Ctable.WI <- cam.stations %>%
   select(placename, longitude, latitude, start_date, end_date, camera_id, camera_name, 
          subproject_name, timestamp) %>%
@@ -37,14 +44,18 @@ Ctable.WI <- cam.stations %>%
 cam.stations$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, format =
                                                        "%Y-%m-%d %H:%M:%S", tz = "UTC")) 
 
+#****************************************************************************
 # Generate species record table with 'independent' records ####
+#****************************************************************************
 # Rule here is 5 min
-# internal function in CampTrapR package. Notice the 3 colons.
+
+# Internal function in CampTrapR package. Notice the 3 colons.
 # Can take some time to run if there are a lot of photos.
-# need to remove records taken at the same time of same species and location
-# Reconyx rapidfire cameras can take photos quick enough that they
+
+# Need to remove records taken at the same time of same species and location
+# as Reconyx rapidfire cameras can take photos quick enough that they
 # can have the same time stamp
-# Don't need the below if using camtrapR deluxe
+# Don't need the below if using camtrapRDeluxe
 
 # For CamTrapR - very slow!!
 # cam.stations.d <- cam.stations[!duplicated(cam.stations[c('DateTimeOriginal',
@@ -63,16 +74,16 @@ cam.stations$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, for
 #                                                                    minDeltaTime = 5 # 5 min threshold for independence
 # )
 
+# OR use camtrapRdeluxe (faster)....
 
+# To install camtrapRdeluxe:
 
-# Generate species record table with 'independent' records ####
-# Rule here is 5 min
-# internal function in CampTrapR package. Notice the 3 colons.
-# Can take some time to run if there are a lot of photos.
-# To install camtrapRdeluxe (faster)
 # install.packages("remotes")
-# remotes::install_github("carlopacioni/camtrapRdeluxe",force = TRUE) #Warning this is not yet a completed package but it seems to be working for the purposes we require.
-# Note only working under R.4.2.x or below. Not working in 4.3.x
+# remotes::install_github("carlopacioni/camtrapRdeluxe",force = TRUE) 
+
+# Warning this is not yet a completed package but it seems to be working for
+# the purposes we require.
+# Note working under R.4.2.x or below. Have had issues working in 4.3.x
 
 records_filter5_min <- camtrapRdeluxe:::assessTemporalIndependence(intable = cam.stations,
                                                                    deltaTimeComparedTo = "lastIndependentRecord",  
@@ -104,9 +115,9 @@ write.csv(records_filter5_min,
 save(records_filter5_min, Ctable.WI,
      file = "data/BIoL3009_WI_5min_data_2023.RData") # change filename
 
-#*********************************************************************
+#****************************************************************************
 # Camera summary ####
-#********************************************************************
+#****************************************************************************
 
 load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to curent year
 
@@ -143,9 +154,9 @@ effort <- camop_op %>% #
   rename(., days =  "." )
 
 
-#*******************************************************************#
+#****************************************************************************
 # Exploring the data: detection maps ####
-#******************************************************************#
+#****************************************************************************
 
 ## Read in camera data, if saved earlier. Ignore if already loaded from above code.
 load(file = "data/BIoL3009_WI_5min_data_2023.RData") # if needed
@@ -171,9 +182,9 @@ detectionMaps(CTtable = Ctable.WI,
                           shapefileProjection	="+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs"
   ) 
 
-#*******************************************************************#
+#****************************************************************************
 # Exploring the data: examples of diel activity ####
-#* *****************************************************************#
+#****************************************************************************
 
 ## What species are detected ####
 unique(records_filter5_min$species)
@@ -207,9 +218,9 @@ activityOverlap(recordTable = records_filter5_min,
                 plotDirectory = "output/",
                 plotR       = TRUE)
 
-#****************************************************************#
-# Exploring the data: number of images per site #### to finish
-#****************************************************************#
+#****************************************************************************
+# Exploring the data: number of images per site ####
+#****************************************************************************
 
 library(scales)
 
@@ -225,7 +236,9 @@ species.count <- records_filter5_min %>%
   tally()
 
 
-## add effort and calc mean and se per fire treatment ####
+## add effort and calc mean and se per site ####
+
+# Note this is using each camera per site to calc the mean, but are they independent?
 
 species.count.effort <- left_join(species.count, effort, by = "placename") %>%
   mutate(RAI = n/days*3) %>%
