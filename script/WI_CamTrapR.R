@@ -14,10 +14,11 @@ library(lubridate)
 ## Load camera data ####
 ## Change filenames after each data download
 
-cam <- read.csv("data/wildlife-insights_BMCC_20230701_data/wildlife-insights_336007e2-fd19-45fa-b496-333668b76f0e_project-2002996_data/images.csv",
+cam <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/images.csv",
                 header = TRUE)
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/wildlife-insights_BMCC_20230701_data/wildlife-insights_336007e2-fd19-45fa-b496-333668b76f0e_project-2002996_data/deployments.csv", header = TRUE)
+stations <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/wildlife-insights_ada00d32-fa3b-4d8a-abab-3fb6d8bf17df_project-2004409_data/deployments.csv", 
+                     header = TRUE)
  
 
 # join station locations with effort
@@ -156,7 +157,7 @@ detectionMaps(CTtable = Ctable.WI,
                           Xcol = "longitude",
                           Ycol = "latitude",
                           #speciesToShow = "Swamp Wallaby",
-                          stationCol = "deployment_id",
+                          stationCol = "placename",
                           speciesCol = "common_name",
                           writePNG = FALSE,
                           plotR = TRUE,
@@ -175,10 +176,10 @@ detectionMaps(CTtable = Ctable.WI,
 #* *****************************************************************#
 
 ## What species are detected ####
-unique(records_filter5_min.2022$species)
+unique(records_filter5_min$species)
 
 ## Activity #### 
-activityDensity(recordTable = records_filter5_min, # change to current dataset
+activityDensity(recordTable = records_filter5_min, 
                 speciesCol = "species",
                 allSpecies  = TRUE,
                 writePNG    = FALSE,
@@ -188,7 +189,7 @@ activityDensity(recordTable = records_filter5_min, # change to current dataset
                 recordDateTimeFormat = "ymd HMS",
                 add.rug     = TRUE)
 
-activityRadial(recordTable = records_filter5_min, # change to current dataset
+activityRadial(recordTable = records_filter5_min, 
                speciesCol = "species",
                allSpecies  = TRUE,
                writePNG    = FALSE,
@@ -197,10 +198,10 @@ activityRadial(recordTable = records_filter5_min, # change to current dataset
                recordDateTimeFormat = "ymd HMS",
                add.rug     = TRUE)
 
-activityOverlap(recordTable = records_filter5_min, # change to current dataset
+activityOverlap(recordTable = records_filter5_min, 
                 speciesCol = "species",
-                speciesA    = "Rattus fuscipes",    
-                speciesB    = "Antechinus stuartii",  
+                speciesA    = "Rattus Species",    # change species names to match your dataset
+                speciesB    = "Antechinus Species",  # change species names to match your dataset
                 legendPosition = "top",
                 writePNG    = FALSE,
                 plotDirectory = "output/",
@@ -210,7 +211,10 @@ activityOverlap(recordTable = records_filter5_min, # change to current dataset
 # Exploring the data: number of images per site #### to finish
 #****************************************************************#
 
-#library(scales)
+library(scales)
+
+# Read in function to calc SE
+source("script/handy_functions.R") 
 
 # if we have unequal sampling effort across our cameras, we can standarise
 # each camera by the number of nights it was active - i.e. effort.
@@ -224,17 +228,64 @@ species.count <- records_filter5_min %>%
 ## add effort and calc mean and se per fire treatment ####
 
 species.count.effort <- left_join(species.count, effort, by = "placename") %>%
+  mutate(RAI = n/days*3) %>%
   group_by(subproject_name, common_name) %>%
   summarise_if(is.numeric, list(mean,se)) %>%
   dplyr::select(-days_fn2) %>%
-  rename(., c(mean = "n_fn1", days =  "days_fn1", se = "n_fn2")) %>%
-  mutate(RAI = mean/days*100) %>%
-  ungroup() %>%
-  complete(nesting(subproject_name, fire_class, days), common_name, fill = list(mean = 0, se = 0, RAI = 0)) 
+  rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
+              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2"))
 
 
+## Graphing images per site ####
+# Note we have calc relative activity index (RAI), which is:
+# (the number of images/number of days the camera was active)*3 days
+#
+# If there were no camera failures and all cameras were active for the same amount of time (3 days),
+# then the mean number of images per camera is the same as the RAI.
 
 
+overall.site.means <- species.count.effort %>% 
+  #filter(common_name %in% speciesToPlot) %>%
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +
+  geom_col(position=position_dodge())+
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5,
+                position =  position_dodge(width = 0.9))+
+  theme_classic() +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
 
+overall.site.means
+
+# to save plot out uncomment the below line
+# ggsave(plot = overall.site.means,
+#         "output/BIOL3009_RAI_allSpecies.png", width = 12, height = 7)
+
+# if you want to select different species to plot:
+
+## Specis to plot
+# add of remove species common names to choose what you want to plot.
+
+speciesToPlot <- c("Superb Lyrebird",
+                   "Swamp Wallaby", "Long-nosed Bandicoot",
+                  "Common Brushtail Possum",    
+                   "Red Fox")
+
+species.site.means <- species.count.effort %>% 
+  filter(common_name %in% speciesToPlot) %>%
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +
+  geom_col(position=position_dodge())+
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5,
+                position =  position_dodge(width = 0.9))+
+  theme_classic() +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+
+species.site.means
+
+# to save plot out uncomment the below line
+# ggsave(plot = species.site.means ,
+#            "output/BIOL3009_RAI_Species.png", width = 12, height = 7)
 
 
