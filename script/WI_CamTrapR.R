@@ -227,7 +227,7 @@ library(scales)
 # Read in function to calc SE
 source("script/handy_functions.R") 
 
-# if we have unequal sampling effort across our cameras, we can standarise
+# If we have unequal sampling effort across our cameras, we can standarise
 # each camera by the number of nights it was active - i.e. effort.
 
 ## count up number of photos per species ####
