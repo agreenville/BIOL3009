@@ -1,5 +1,6 @@
 # BIOL3009
 R scripts for BIOL3009 Terrestrial Field Ecology.
+Aaron Greenville (aaron.greenville@sydney.edu.au)
 
 Below is the workflow for getting camera trap images ready and uploading to Wildlife Insights.
 
