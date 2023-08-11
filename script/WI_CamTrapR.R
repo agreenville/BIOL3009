@@ -18,11 +18,11 @@ library(lubridate)
 
 ## Change filenames and path to suit your data
 
-cam <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/images.csv",
+cam <- read.csv("data/2023/wildlife-insights_20230811_data/images.csv",
                 header = TRUE)
 
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/2023/wildlife-insights_AI_noblanks_data/deployments.csv", 
+stations <- read.csv("data/2023/wildlife-insights_20230811_data/deployments.csv", 
                      header = TRUE)
  
 # join station locations with effort
@@ -187,11 +187,11 @@ detectionMaps(CTtable = Ctable.WI,
 #****************************************************************************
 
 ## What species are detected ####
-unique(records_filter5_min$species)
+unique(records_filter5_min$common_name)
 
 ## Activity #### 
 activityDensity(recordTable = records_filter5_min, 
-                speciesCol = "species",
+                speciesCol = "common_name",
                 allSpecies  = TRUE,
                 writePNG    = FALSE,
                 plotDirectory = "output/",
@@ -201,7 +201,7 @@ activityDensity(recordTable = records_filter5_min,
                 add.rug     = TRUE)
 
 activityRadial(recordTable = records_filter5_min, 
-               speciesCol = "species",
+               speciesCol = "common_name",
                allSpecies  = TRUE,
                writePNG    = FALSE,
                plotR       = TRUE,
@@ -210,7 +210,7 @@ activityRadial(recordTable = records_filter5_min,
                add.rug     = TRUE)
 
 activityOverlap(recordTable = records_filter5_min, 
-                speciesCol = "species",
+                speciesCol = "common_name",
                 speciesA    = "Rattus Species",    # change species names to match your dataset
                 speciesB    = "Antechinus Species",  # change species names to match your dataset
                 legendPosition = "top",
@@ -279,10 +279,13 @@ overall.site.means
 ## Specis to plot
 # add of remove species common names to choose what you want to plot.
 
-speciesToPlot <- c("Superb Lyrebird",
-                   "Swamp Wallaby", "Long-nosed Bandicoot",
-                  "Common Brushtail Possum",    
-                   "Red Fox")
+speciesToPlot <- c("Rattus Species",    
+                "Antechinus Species", 
+                "Superb Lyrebird",
+                "Swamp Wallaby", 
+                "Long-nosed Bandicoot",
+                "Common Brushtail Possum")
+      
 
 species.site.means <- species.count.effort %>% 
   filter(common_name %in% speciesToPlot) %>%
