@@ -18,11 +18,11 @@ library(lubridate)
 
 ## Change filenames and path to suit your data
 
-cam <- read.csv("data/2023/wildlife-insights_20230811_data/images.csv",
+cam <- read.csv("data/2023/wildlife-insights_2023_data/images.csv",
                 header = TRUE)
 
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/2023/wildlife-insights_20230811_data/deployments.csv", 
+stations <- read.csv("data/2023/wildlife-insights_2023_data/deployments.csv", 
                      header = TRUE)
  
 # join station locations with effort
@@ -281,8 +281,6 @@ overall.site.means
 
 speciesToPlot <- c("Rattus Species",    
                 "Antechinus Species", 
-                "Superb Lyrebird",
-                "Swamp Wallaby", 
                 "Long-nosed Bandicoot",
                 "Common Brushtail Possum")
       
