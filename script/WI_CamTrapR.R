@@ -8,6 +8,19 @@
 #****************************************************************************
 # Load packages ####
 #****************************************************************************
+ 
+# uncomment and run lines below to install packages if you don't have them:
+
+# Package names
+# packages <- c("tidyverse", "camtrapR", "lubridate", "scales")
+# 
+# # Install packages not yet installed
+# installed_packages <- packages %in% rownames(installed.packages())
+# if (any(installed_packages == FALSE)) {
+#   install.packages(packages[!installed_packages])
+# }
+
+
 library(camtrapR)
 library(tidyverse)
 library(lubridate)
