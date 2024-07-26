@@ -10,11 +10,13 @@ format:
 execute:
   freeze: auto
   warning: false
-  eval: false # uncomment to disable code execution
+  #eval: false # uncomment to disable code execution
   
 ---
 
-## Install and load packages
+## Prerequisites: Install and load packages
+
+Make sure you have a recent version of [R](https://cran.rstudio.com/) *and* [RStudio](https://posit.co/download/rstudio-desktop/) installed (they are not the same thing). You will also need to install the following packages:
 
 ```{r}
 # # Uncomment and run lines below to install packages if you don't have them:
@@ -59,13 +61,35 @@ Discuss with your group what time threshold would be most appropriate to remove 
 
 ### Load the data into R.
 
-Here we are using the `.RData` file, but you could also use the `.csv` file.
+Here we are using the `.RData` file, but you could also use the `.csv` files, but there is an extra step - see below.
 
 ```{r}
 
 load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to current year
 
 ```
+
+If you use the `.csv` files, you will need to read in the data and convert the date and time columns to a date-time object.
+
+```{r}
+# # Uncomment to run if using the .csv file
+
+# records_filter5_min <- read.csv("data/BIOL3009_Allsites_2023_5min_data.csv", header = TRUE)
+# 
+# records_filter5_min$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, format =
+#                                                        "%Y-%m-%d %H:%M:%S", tz = "UTC")) 
+
+```
+
+Also if you are using the `.csv` files, read in the Ctable:
+```{r}
+
+# # Uncomment to run if using the .csv file
+
+# Ctable.WI <- read.csv("data/WI_Ctable.csv", header = TRUE)
+
+```
+
 
 
 :::{.callout-note}
