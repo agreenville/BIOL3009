@@ -3227,12 +3227,12 @@ window.Quarto = {
   <li><a href="#calculate-survey-effort" id="toc-calculate-survey-effort" class="nav-link" data-scroll-target="#calculate-survey-effort">Calculate survey effort</a></li>
   </ul></li>
   <li><a href="#task-4-creatingcombining-taxa-or-species-groups." id="toc-task-4-creatingcombining-taxa-or-species-groups." class="nav-link" data-scroll-target="#task-4-creatingcombining-taxa-or-species-groups.">Task 4: Creating/combining taxa or species groups.</a></li>
-  <li><a href="#task-5-exploring-the-data" id="toc-task-5-exploring-the-data" class="nav-link" data-scroll-target="#task-5-exploring-the-data">Task 5: Exploring the data</a>
+  <li><a href="#task-5-activity-and-diversity-per-site" id="toc-task-5-activity-and-diversity-per-site" class="nav-link" data-scroll-target="#task-5-activity-and-diversity-per-site">Task 5: Activity and diversity per site</a>
   <ul class="collapse">
-  <li><a href="#exploring-the-data-calculate-the-number-of-images-per-species" id="toc-exploring-the-data-calculate-the-number-of-images-per-species" class="nav-link" data-scroll-target="#exploring-the-data-calculate-the-number-of-images-per-species">Exploring the data: Calculate the number of images per species</a></li>
+  <li><a href="#calculate-the-mean-activity-per-site-number-of-images-per-species" id="toc-calculate-the-mean-activity-per-site-number-of-images-per-species" class="nav-link" data-scroll-target="#calculate-the-mean-activity-per-site-number-of-images-per-species">Calculate the mean activity per site (number of images per species)</a></li>
   <li><a href="#plotting-the-mean-number-of-images-per-species-per-site" id="toc-plotting-the-mean-number-of-images-per-species-per-site" class="nav-link" data-scroll-target="#plotting-the-mean-number-of-images-per-species-per-site">Plotting the mean number of images per species per site</a></li>
-  <li><a href="#exploring-the-data-species-richness-per-site" id="toc-exploring-the-data-species-richness-per-site" class="nav-link" data-scroll-target="#exploring-the-data-species-richness-per-site">Exploring the data: species richness per site</a></li>
-  <li><a href="#exploring-the-data-species-diversity" id="toc-exploring-the-data-species-diversity" class="nav-link" data-scroll-target="#exploring-the-data-species-diversity">Exploring the data: species diversity</a></li>
+  <li><a href="#species-richness-per-site" id="toc-species-richness-per-site" class="nav-link" data-scroll-target="#species-richness-per-site">Species richness per site</a></li>
+  <li><a href="#species-diversity" id="toc-species-diversity" class="nav-link" data-scroll-target="#species-diversity">Species diversity</a></li>
   </ul></li>
   <li><a href="#task-6-optional-detection-maps" id="toc-task-6-optional-detection-maps" class="nav-link" data-scroll-target="#task-6-optional-detection-maps">Task 6 (optional): Detection maps</a></li>
   <li><a href="#task-7-optional-diel-activity" id="toc-task-7-optional-diel-activity" class="nav-link" data-scroll-target="#task-7-optional-diel-activity">Task 7 (optional): Diel activity</a>
@@ -3474,14 +3474,14 @@ Tip
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(common_name != &quot;Human&quot;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="task-5-exploring-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="task-5-exploring-the-data">Task 5: Exploring the data</h2>
+<section id="task-5-activity-and-diversity-per-site" class="level2">
+<h2 class="anchored" data-anchor-id="task-5-activity-and-diversity-per-site">Task 5: Activity and diversity per site</h2>
 <p>Read in function to calculate SE. This is a simple function that calculates the standard error of a vector.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;script/handy_functions.R&quot;</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="exploring-the-data-calculate-the-number-of-images-per-species" class="level3">
-<h3 class="anchored" data-anchor-id="exploring-the-data-calculate-the-number-of-images-per-species">Exploring the data: Calculate the number of images per species</h3>
+<section id="calculate-the-mean-activity-per-site-number-of-images-per-species" class="level3">
+<h3 class="anchored" data-anchor-id="calculate-the-mean-activity-per-site-number-of-images-per-species">Calculate the mean activity per site (number of images per species)</h3>
 <section id="calculate-the-number-of-images-per-species-per-camera" class="level4">
 <h4 class="anchored" data-anchor-id="calculate-the-number-of-images-per-species-per-camera">Calculate the number of images per species per camera</h4>
 <p>If we have unequal sampling effort across our cameras, we can standarise each camera by the number of nights it was active - i.e. effort.</p>
@@ -3564,8 +3564,8 @@ Note
 </div>
 </section>
 </section>
-<section id="exploring-the-data-species-richness-per-site" class="level3">
-<h3 class="anchored" data-anchor-id="exploring-the-data-species-richness-per-site">Exploring the data: species richness per site</h3>
+<section id="species-richness-per-site" class="level3">
+<h3 class="anchored" data-anchor-id="species-richness-per-site">Species richness per site</h3>
 <p>Here we will calculate mean species richness per site:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sp.richness <span class="ot">&lt;-</span> species.count <span class="sc">%&gt;%</span> </span>
@@ -3593,8 +3593,8 @@ Note
 </div>
 </section>
 </section>
-<section id="exploring-the-data-species-diversity" class="level3">
-<h3 class="anchored" data-anchor-id="exploring-the-data-species-diversity">Exploring the data: species diversity</h3>
+<section id="species-diversity" class="level3">
+<h3 class="anchored" data-anchor-id="species-diversity">Species diversity</h3>
 <section id="simpsons-diversity-index" class="level4">
 <h4 class="anchored" data-anchor-id="simpsons-diversity-index">Simpson’s diversity index</h4>
 <p>Simpson’s diversity index is calculated as:</p>

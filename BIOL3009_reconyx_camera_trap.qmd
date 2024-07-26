@@ -10,7 +10,7 @@ format:
 execute:
   freeze: auto
   warning: false
-  #eval: false # uncomment to disable code execution
+  #eval: false # uncomment to disable code execution and make worksheet
   
 ---
 
@@ -212,7 +212,7 @@ Uncomment the code below and replace species names/group with your own
 
 ```
 
-## Task 5: Exploring the data
+## Task 5: Activity and diversity per site
 
 Read in function to calculate SE. This is a simple function that calculates the standard error of a vector. 
 
@@ -221,7 +221,7 @@ source("script/handy_functions.R")
 
 ```
 
-### Exploring the data: Calculate the number of images per species
+### Calculate the mean activity per site (number of images per species)
 
 #### Calculate the number of images per species per camera
 
@@ -325,7 +325,7 @@ To save plot out uncomment the below line
 ```
 
 
-### Exploring the data: species richness per site
+### Species richness per site
 
 Here we will calculate mean species richness per site:
 
@@ -364,7 +364,7 @@ To save plot out uncomment the below line:
 # ggsave(plot = sp.richness.plot, "output/BIOL3009_SpeciesRichness.png", width = 12, height = 7)
 ```
 
-### Exploring the data: species diversity
+### Species diversity
 
 #### Simpson's diversity index
 
