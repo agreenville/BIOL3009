@@ -1,0 +1,528 @@
+---
+title: "BIOL3009: Reconyx camera trapping data"
+author: "Aaron Greenville"
+date: today
+format: 
+  html:
+    toc: true
+    code-fold: false
+    embed-resources: true
+execute:
+  freeze: auto
+  warning: false
+  eval: false # uncomment to disable code execution
+  
+---
+
+## Install and load packages
+
+```{r}
+# # Uncomment and run lines below to install packages if you don't have them:
+# 
+# # Package names
+# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble")
+# 
+# # Install packages not yet installed
+# installed_packages <- packages %in% rownames(installed.packages())
+# if (any(installed_packages == FALSE)) {
+#   install.packages(packages[!installed_packages])
+# }
+
+
+library(camtrapR)
+library(dplyr)
+library(ggplot2)
+library(tibble)
+library(lubridate)
+library(scales)
+
+```
+
+## Task 1: Download and explore the data
+
+There are two data sets supplied on Canvas:
+
+-   Camera data (5 min threshold rule applied)
+-   Camera data from Wildlife Insights (all data, except blanks and humans)
+
+Download and unzip the file.
+
+:::{.callout-important}
+Explore the metadata (all the pdf documents) for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.
+:::
+
+## Task 2: Time threshold rule
+
+Discuss with your group what time threshold would be most appropriate to remove images of the same animal and improve independence. Is 5 min appropriate?
+
+## Task 3: Exploring the data
+
+### Load the data into R.
+
+Here we are using the `.RData` file, but you could also use the `.csv` file.
+
+```{r}
+
+load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to current year
+
+```
+
+
+:::{.callout-note}
+We are going to use the power of the CamTrapR package to summarise the camera data. This will allow us to calculate the number of days each camera was operational, the number of images per species per camera, and the survey effort for each camera.
+
+For more information on the CamTrapR package, see the [documentation](https://cran.r-project.org/web/packages/camtrapR/camtrapR.pdf).
+:::
+
+### Calculate the number of days active each camera was operational
+
+```{r}
+
+camop_op <- cameraOperation(CTtable      = Ctable.WI, 
+                            stationCol   = "placename", 
+                            setupCol     = "start_date",
+                            retrievalCol = "end_date",
+                            writecsv     = FALSE,
+                            hasProblems  = FALSE,
+                            dateFormat   = "ymd"
+)
+
+str(camop_op)
+
+```
+
+### Summary report
+
+Explore the data and generate a summary report. This will provide information on the number of images per species per camera and other operational information.
+
+```{r}
+
+report <- surveyReport(recordTable          = records_filter5_min,
+                        CTtable              = Ctable.WI,
+                        camOp                = camop_op,
+                        speciesCol           = "common_name",
+                        stationCol           = "placename",
+                        setupCol             = "start_date",
+                        retrievalCol         = "end_date",
+                        CTDateFormat         = "ymd", 
+                        recordDateTimeCol    = "DateTimeOriginal",
+                        recordDateTimeFormat = "ymd HMS")
+
+```
+
+The report is list of five different data frames/tables:
+ - events_by_species
+ - events_by_station2
+ - events_by_station
+ - survey_dates
+ - species_by_station
+
+:::{.callout-tip}
+To make it easier to see each table, subset each separately. Replace `events_by_species` with the name of the table you want to view.
+:::
+
+```{r}
+report$events_by_species
+```
+
+
+
+### Calculate survey effort
+
+Calculate the survey effort for each camera. It is important to standardise the number of images per camera by the number of days the camera was operational. 
+
+
+:::{.callout-tip}
+Cameras that are operational for longer will have more images, but this does not necessarily mean that there are more animals present.
+:::
+
+```{r}
+
+effort <- camop_op %>% #  
+  rowSums(.,na.rm=TRUE) %>%
+  data.frame(.) %>%
+  rownames_to_column("placename") %>%
+  rename(., days =  "." )
+
+```
+
+## Task 4: Creating/combining taxa or species groups.
+
+Decide as a group if you want to restrict your analysis to a subset of species or groups of species. Alternatively, you may want to combine species into groups for analysis. For example, combining the group Rodent and bush rat into a single rodent group. 
+
+:::{.callout-tip}
+It will depend on the focus of your research question.
+:::
+
+Lets first see what species are present in the data set.
+
+```{r}
+## species list ####
+unique(records_filter5_min$common_name)
+
+```
+
+**Example code to combine groups:**
+
+Uncomment the code below and replace species names/group with your own
+
+```{r}
+
+# records_filter5_min$common_name <- recode(records_filter5_min$common_name,
+#                                           "Rattus fuscipes" = "Rattus Species",
+#                                           "Rattus norvegicus" = "Rattus Species",
+#                                           "Rattus rattus" = "Rattus Species",
+#                                           "Antechinus stuartii" = "Antechinus Species")
+
+
+```
+
+**Remove groups not needed:**
+
+Uncomment the code below and replace species names/group with your own
+
+```{r}
+
+# records_filter5_min <- records_filter5_min %>%
+#   filter(common_name != "Human")
+
+```
+
+## Task 5: Exploring the data
+
+Read in function to calculate SE. This is a simple function that calculates the standard error of a vector. 
+
+```{r}
+source("script/handy_functions.R") 
+
+```
+
+### Exploring the data: Calculate the number of images per species
+
+#### Calculate the number of images per species per camera
+
+If we have unequal sampling effort across our cameras, we can standarise each camera by the number of nights it was active - i.e. effort.
+
+We will calculate the relative activity index (RAI), which is:
+
+
+$$
+RAI = \frac{\text{Number of images}} {\text{Number of days the camera was active} } \times 3 \text{ days}
+$$
+
+If there were no camera failures and all cameras were active for the same amount of time (3 days), then the mean number of images per camera is the same as the RAI. Note 3 days is arbitrary. Often we use 100 days as a standard effort, but this can be adjusted to suit your study.
+
+First we count up number of photos per species:
+
+```{r}
+
+species.count <- records_filter5_min %>% 
+  group_by(placename, camera_name, common_name, subproject_name) %>%
+  tally()
+
+```
+
+Then add effort and calculate the mean RAI and SE per site. 
+
+:::{.callout-note}
+Note the code above is using each camera per site to calculate the mean, but are they independent?
+:::
+
+
+```{r}
+
+species.count.effort <- left_join(species.count, effort, by = "placename") %>%
+  mutate(RAI = n/days*3) %>%
+  group_by(subproject_name, common_name) %>%
+  summarise_if(is.numeric, list(mean,se)) %>%
+  dplyr::select(-days_fn2) %>%
+  rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
+              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2"))
+
+```
+
+### Plotting the mean number of images per species per site
+
+
+#### All species/groups
+
+
+```{r}
+overall.site.means <- species.count.effort %>%
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +     geom_col(position=position_dodge())+ 
+   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+    theme_classic() + 
+    theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +  
+    scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+
+overall.site.means
+
+```
+
+
+To save plot out uncomment the below line. Change the filename to your own.:
+```{r}
+
+# ggsave(plot = overall.site.means, "output/BIOL3009_RAI_allSpecies.png", width = 12, height = 7)
+```
+
+
+#### Selecting species to plot
+If you want to select different species to plot:
+
+Add of remove species common names to choose what you want to plot.
+
+```{r}
+
+speciesToPlot <- c("Rattus Species", "Antechinus Species", "Long-nosed Bandicoot", "Common Brushtail Possum")
+
+```
+
+```{r}
+
+species.site.means <- species.count.effort %>% 
+  filter(common_name %in% speciesToPlot) %>% 
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +
+  geom_col(position=position_dodge())+ 
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+  theme_classic() + theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+
+species.site.means
+```
+
+
+To save plot out uncomment the below line
+
+```{r}
+
+# ggsave(plot = species.site.means , "output/BIOL3009_RAI_Species.png", width = 12, height = 7)
+
+```
+
+
+### Exploring the data: species richness per site
+
+Here we will calculate mean species richness per site:
+
+```{r}
+
+sp.richness <- species.count %>% 
+  group_by(placename, subproject_name) %>% 
+  summarise(n = n_distinct(common_name)) %>% 
+  rename(., speciesRichness = n) %>% 
+  group_by(subproject_name) %>% 
+  summarise(mean = mean(speciesRichness), se = se(speciesRichness))
+
+```
+
+
+#### Plotting mean species richness per site
+
+
+```{r}
+
+sp.richness.plot <- sp.richness %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) + 
+  geom_col(position=position_dodge())+ 
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5, position = position_dodge(width = 0.9))+ 
+  theme_classic() + 
+  ylab("Mean species richness") + theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) + scale_y_continuous(expand = c(0, 0), limits = c(0,10), oob = rescale_none)
+
+sp.richness.plot
+
+```
+
+
+To save plot out uncomment the below line:
+
+```{r}
+# ggsave(plot = sp.richness.plot, "output/BIOL3009_SpeciesRichness.png", width = 12, height = 7)
+```
+
+### Exploring the data: species diversity
+
+#### Simpson's diversity index
+
+Simpson's diversity index is calculated as:
+
+$$ D = 1 - \sum_{i=1}^Np_i^2$$
+ 
+ where $p_i$ is the proportion of species i in the community and $N$ is the number of species.
+
+ 
+We can calculate this for each camera and take the mean for each and plot the results. This is a measure of species diversity, not richness. Richness is the number of species present in a community, while diversity is a measure of the number of species and their relative abundance.
+
+:::{.callout-note}
+A community with many species, but where one species dominates, will have a lower diversity than a community with fewer species but where they are more evenly distributed.
+:::
+
+#### Calculate Simpson's diversity index
+
+The Simpson index gives more weight to common or dominant species. The index ranges from 0 to 1.
+
+```{r}
+
+species.diversity.simpson <- species.count %>% 
+  group_by(placename, subproject_name) %>%
+  mutate(proportion = n/sum(n)) %>% 
+  summarise(Simpson = 1 - sum(proportion^2)) %>%
+  group_by(subproject_name) %>% 
+  summarise(mean = mean(Simpson), se = se(Simpson))
+
+```
+
+
+#### Plotting Simpson's diversity index
+
+
+```{r}
+
+species.diversity.simpson.plot <- species.diversity.simpson %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) + 
+  geom_col(position=position_dodge()) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5, position = position_dodge(width = 0.9))+ 
+  theme_classic() + ylab("Simpson's diversity index") + 
+  theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,1), oob = rescale_none)
+
+species.diversity.simpson.plot
+
+```
+
+
+To save plot out uncomment the below line:
+
+```{r}
+
+# ggsave(plot = species.diversity.simpson.plot, "output/BIOL3009_SpeciesDiversitySimpson.png", width = 12, height = 7)
+
+```
+
+
+#### Shannon's diversity index
+
+Shannon's diversity index is calculated as:
+
+
+
+$$ H = -\sum_{i=1}^N p_i ln(p_i) $$
+
+where $p_i$ is the proportion of species $i$ in the community and $N$ is the number of species. 
+
+We can calculate this index for each camera and take the mean for each site and plot the results, as we did above for the Simpson's index.
+
+
+```{r}
+species.diversity <- species.count %>% 
+  group_by(placename, subproject_name) %>%
+  mutate(proportion = n/sum(n)) %>% 
+  summarise(Shannon = -sum(proportion * log(proportion))) %>% 
+  group_by(subproject_name) %>% 
+  summarise(mean = mean(Shannon), se = se(Shannon))
+```
+
+
+
+#### Plotting Shannon's diversity index
+
+```{r}
+
+species.diversity.plot <- species.diversity %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) + 
+  geom_col(position=position_dodge()) + 
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5,
+                position = position_dodge(width = 0.9)) + 
+  theme_classic() + ylab("Shannon's diversity index") + 
+  theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,2), oob = rescale_none)
+
+species.diversity.plot
+```
+
+To save plot out uncomment the below line:
+
+```{r}
+
+# ggsave(plot = species.diversity.plot, "output/BIOL3009_SpeciesDiversity.png", width = 12, height = 7)
+
+```
+
+
+## Task 6 (optional): Detection maps
+
+Detection maps are a useful way to visualise the distribution of species across your study area. They can be used to identify areas of high and low species richness, and to identify areas where certain species are more or less likely to be detected.
+
+```{r}
+
+detectionMaps(CTtable = Ctable.WI, 
+              recordTable = records_filter5_min, 
+              Xcol = "longitude", 
+              Ycol = "latitude", 
+              #speciesToShow = "Swamp Wallaby", 
+              stationCol = "placename", 
+              speciesCol = "common_name", 
+              writePNG = FALSE, 
+              plotR = TRUE, 
+              printLabels = FALSE, 
+              richnessPlot = TRUE, 
+              addLegend = TRUE, 
+              writeShapefile = FALSE, 
+              speciesPlots = TRUE, 
+              shapefileName = "BIOL3009_Species_2023", # change filename to current year
+              shapefileDirectory = "output/",
+              shapefileProjection ="+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs" )
+
+```
+
+
+## Task 7 (optional): Diel activity
+
+### Species list
+
+```{r}
+
+unique(records_filter5_min$common_name)
+
+```
+
+
+### Diel activity plots
+
+
+Change the species names to match your data set and the species you want to plot.
+
+```{r}
+
+activityDensity(recordTable = records_filter5_min, 
+                speciesCol = "common_name", 
+                allSpecies = TRUE, 
+                writePNG = FALSE, 
+                plotDirectory = "output/", 
+                plotR = TRUE, 
+                recordDateTimeCol = "DateTimeOriginal", 
+                recordDateTimeFormat = "ymd HMS", 
+                add.rug = TRUE)
+
+activityRadial(recordTable = records_filter5_min, 
+               speciesCol = "common_name", 
+               allSpecies = TRUE, 
+               writePNG = FALSE, 
+               plotR = TRUE, 
+               recordDateTimeCol = "DateTimeOriginal", 
+               recordDateTimeFormat = "ymd HMS", 
+               add.rug = TRUE)
+
+activityOverlap(recordTable = records_filter5_min, 
+                speciesCol = "common_name", 
+                speciesA = "Rattus Species", # change species names to match your data set 
+                speciesB = "Antechinus Species", # change species names to match your data set
+                legendPosition = "topleft", 
+                writePNG = FALSE, 
+                plotDirectory = "output/", 
+                plotR = TRUE)
+
+```
+
+
+
