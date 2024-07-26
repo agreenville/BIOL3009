@@ -2,7 +2,7 @@
 # Wildlife Insights workflow to CamTrapR                                    #
 #    Example script                                                         #
 #                                                                           #
-# Aaron Greenville Aug 2022; update Aug 2023                                #
+# Aaron Greenville Aug 2022; update Aug 2023; update Jul 2024               #
 ########################################################################### #
 
 #****************************************************************************
@@ -437,5 +437,3 @@ species.diversity.plot
 # to save plot out uncomment the below line
 # ggsave(plot = species.diversity.plot,
 #        "output/BIOL3009_SpeciesDiversity.png", width = 12, height = 7)
-
-
