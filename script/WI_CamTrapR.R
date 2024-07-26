@@ -132,7 +132,7 @@ save(records_filter5_min, Ctable.WI,
 # Camera summary ####
 #****************************************************************************
 
-load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to curent year
+load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to current year
 
 
 ### calc number of days active ####
@@ -314,5 +314,128 @@ species.site.means
 # to save plot out uncomment the below line
 # ggsave(plot = species.site.means ,
 #            "output/BIOL3009_RAI_Species.png", width = 12, height = 7)
+
+#****************************************************************************
+# Exploring the data: species richness per site ####
+#****************************************************************************
+
+## Mean species richness per site ####
+
+sp.richness <- species.count %>% 
+  group_by(placename, subproject_name) %>%
+  summarise(n = n_distinct(common_name)) %>%
+  rename(., speciesRichness = n) %>%
+  group_by(subproject_name) %>%
+  summarise(mean = mean(speciesRichness), se = se(speciesRichness))
+
+## Plotting mean species richness per site ####
+
+sp.richness.plot <- sp.richness %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) +
+  geom_col(position=position_dodge())+
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5,
+                position =  position_dodge(width = 0.9))+
+  theme_classic() +
+  ylab("Mean species richness") +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,10), oob = rescale_none)
+
+sp.richness.plot
+
+# to save plot out uncomment the below line
+# ggsave(plot = sp.richness.plot,
+#        "output/BIOL3009_SpeciesRichness.png", width = 12, height = 7)
+
+
+#****************************************************************************
+#*Exploring the data: species diversity ####
+#****************************************************************************
+
+#*Species diversity per site ####
+
+## Simpson's diversity index ####
+
+# Simpson's diversity index is calculated as:
+
+# D = 1 - sum(p_i^2)
+#
+# where p_i is the proportion of species i in the community.
+#
+# We can calculate this for each site and plot the results.
+#
+# Note: This is a measure of species diversity, not richness.
+#
+# Richness is the number of species present in a community, while diversity
+# is a measure of the number of species and their relative abundance.
+#
+# A community with many species, but where one species dominates, will have
+# a lower diversity than a community with fewer species but where they are
+# more evenly distributed.
+
+## Calculate Simpson's diversity index ####
+
+species.diversity.simpson <- species.count %>% 
+  group_by(placename, subproject_name) %>%
+  mutate(proportion = n/sum(n)) %>%
+  summarise(Simpson = 1 - sum(proportion^2)) %>%
+  group_by(subproject_name) %>%
+  summarise(mean = mean(Simpson), se = se(Simpson))
+
+## Plotting Simpson's diversity index ####
+
+species.diversity.simpson.plot <- species.diversity.simpson %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) +
+  geom_col(position=position_dodge())+
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5,
+                position =  position_dodge(width = 0.9))+
+  theme_classic() +
+  ylab("Simpson's diversity index") +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,1), oob = rescale_none)
+
+species.diversity.simpson.plot
+
+# to save plot out uncomment the below line
+# ggsave(plot = species.diversity.simpson.plot,
+#        "output/BIOL3009_SpeciesDiversitySimpson.png", width = 12, height = 7)
+
+## Shannon's diversity index ####
+# Shannon's diversity index is calculated as:
+
+#H = -sum(p_i * ln(p_i))
+#
+#where p_i is the proportion of species i in the community.
+#
+#We can calculate this for each site and plot the results.
+
+## Calculate Shannon's diversity index ####
+
+species.diversity <- species.count %>% 
+  group_by(placename, subproject_name) %>%
+  mutate(proportion = n/sum(n)) %>%
+  summarise(Shannon = -sum(proportion * log(proportion))) %>%
+  group_by(subproject_name) %>%
+  summarise(mean = mean(Shannon), se = se(Shannon))
+
+## Plotting Shannon's diversity index ####
+
+species.diversity.plot <- species.diversity %>% 
+  ggplot(aes(reorder(subproject_name, -mean), mean)) +
+  geom_col(position=position_dodge())+
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5,
+                position =  position_dodge(width = 0.9))+
+  theme_classic() +
+  ylab("Shannon's diversity index") +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0,2), oob = rescale_none)
+
+species.diversity.plot
+
+# to save plot out uncomment the below line
+# ggsave(plot = species.diversity.plot,
+#        "output/BIOL3009_SpeciesDiversity.png", width = 12, height = 7)
 
 
