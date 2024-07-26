@@ -9,10 +9,10 @@
 # Load packages ####
 #****************************************************************************
  
-# uncomment and run lines below to install packages if you don't have them:
+# Uncomment and run lines below to install packages if you don't have them:
 
 # Package names
-# packages <- c("tidyverse", "camtrapR", "lubridate", "scales")
+# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble")
 # 
 # # Install packages not yet installed
 # installed_packages <- packages %in% rownames(installed.packages())
@@ -22,7 +22,10 @@
 
 
 library(camtrapR)
-library(tidyverse)
+#library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tibble)
 library(lubridate)
 
 #****************************************************************************
@@ -165,6 +168,33 @@ effort <- camop_op %>% #
   data.frame(.) %>%
   rownames_to_column("placename") %>%
   rename(., days =  "." )
+
+#****************************************************************************
+# Creating/combining taxa or species groups ####
+#****************************************************************************
+
+# You may want to restrict your analysis to a subset of species or groups of species. 
+# Alternatively, you may want to combine species into groups for analysis.
+# For example, combining the group Rodent and bush rat species into a single rodent group.
+# It will depend on focus of your research question.
+
+## species list ####
+unique(records_filter5_min$common_name)
+
+## Example code to combine groups: ####
+# Replace species names/group with your own
+
+# records_filter5_min$common_name <- recode(records_filter5_min$common_name,
+#                                           "Rattus fuscipes" = "Rattus Species",
+#                                           "Rattus norvegicus" = "Rattus Species",
+#                                           "Rattus rattus" = "Rattus Species",
+#                                           "Antechinus stuartii" = "Antechinus Species")
+
+## Remove groups not needed: ####
+# Replace species names/group with your own
+
+# records_filter5_min <- records_filter5_min %>%
+#   filter(common_name != "Human")
 
 
 #****************************************************************************
@@ -362,7 +392,7 @@ sp.richness.plot
 #
 # where p_i is the proportion of species i in the community.
 #
-# We can calculate this for each site and plot the results.
+# We can calculate this for each camera and take the mean for each and plot the results.
 #
 # Note: This is a measure of species diversity, not richness.
 #
@@ -397,9 +427,11 @@ species.diversity.simpson.plot <- species.diversity.simpson %>%
 
 species.diversity.simpson.plot
 
-# to save plot out uncomment the below line
+# to save plot out uncomment the below line:
 # ggsave(plot = species.diversity.simpson.plot,
 #        "output/BIOL3009_SpeciesDiversitySimpson.png", width = 12, height = 7)
+
+
 
 ## Shannon's diversity index ####
 # Shannon's diversity index is calculated as:
@@ -408,7 +440,7 @@ species.diversity.simpson.plot
 #
 #where p_i is the proportion of species i in the community.
 #
-#We can calculate this for each site and plot the results.
+# We can calculate this for each camera and take the mean for each site and plot the results.
 
 ## Calculate Shannon's diversity index ####
 
