@@ -61,3 +61,7 @@ Once all images are processed, staff will download the data from Wildlife Insigh
 `BIOL3009_CamTrapR.R` - script to process camera trap data that is manually entered into spreadsheets.
 
 `BIOL3009_reconyx_camera_trap.qmd` - Quarto document to create a worksheet for students to process camera trap data from Reconyx cameras.
+
+## Additional files
+
+`BIOL3009_reconyx_camera_trap_worksheet.html` - Worksheet for students to process camera trap data from Reconyx cameras.
