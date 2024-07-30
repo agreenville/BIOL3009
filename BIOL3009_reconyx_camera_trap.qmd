@@ -10,7 +10,7 @@ format:
 execute:
   freeze: auto
   warning: false
-  eval: false # uncomment to disable code execution and make worksheet
+  #eval: false # uncomment to disable code execution and make worksheet
   
 ---
 
@@ -65,7 +65,7 @@ Here we are using the `.RData` file, but you could also use the `.csv` files, bu
 
 ```{r}
 
-load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to current year
+load("data/BIoL3009_WI_5min_data_2023.RData") # change filename and path match your dataset
 
 ```
 
@@ -74,7 +74,7 @@ If you use the `.csv` files, you will need to read in the data and convert the d
 ```{r}
 # # Uncomment to run if using the .csv file
 
-# records_filter5_min <- read.csv("data/BIOL3009_Allsites_2023_5min_data.csv", header = TRUE)
+# records_filter5_min <- read.csv("data/BIOL3009_Allsites_2023_5min_data.csv", header = TRUE) # change filename and path match your dataset
 # 
 # records_filter5_min$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, format =
 #                                                        "%Y-%m-%d %H:%M:%S", tz = "UTC")) 
@@ -86,7 +86,7 @@ Also if you are using the `.csv` files, read in the Ctable:
 
 # # Uncomment to run if using the .csv file
 
-# Ctable.WI <- read.csv("data/WI_Ctable.csv", header = TRUE)
+# Ctable.WI <- read.csv("data/WI_Ctable.csv", header = TRUE) # change file path to match whwre you saved the file.
 
 ```
 

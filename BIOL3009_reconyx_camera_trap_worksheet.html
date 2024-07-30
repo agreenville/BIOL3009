@@ -3332,13 +3332,13 @@ Important
 <h3 class="anchored" data-anchor-id="load-the-data-into-r.">Load the data into R.</h3>
 <p>Here we are using the <code>.RData</code> file, but you could also use the <code>.csv</code> files, but there is an extra step - see below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2023.RData&quot;</span>) <span class="co"># if needed, and change to your filename to current year</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2023.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If you use the <code>.csv</code> files, you will need to read in the data and convert the date and time columns to a date-time object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/BIOL3009_Allsites_2023_5min_data.csv&quot;, header = TRUE)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/BIOL3009_Allsites_2023_5min_data.csv&quot;, header = TRUE) # change filename and path match your dataset</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min$DateTimeOriginal &lt;- as.POSIXct(strptime(cam.stations$timestamp, format =</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                                        &quot;%Y-%m-%d %H:%M:%S&quot;, tz = &quot;UTC&quot;)) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3347,7 +3347,7 @@ Important
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/WI_Ctable.csv&quot;, header = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/WI_Ctable.csv&quot;, header = TRUE) # change file path to match whwre you saved the file.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
