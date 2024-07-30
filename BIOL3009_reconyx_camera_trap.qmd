@@ -10,7 +10,7 @@ format:
 execute:
   freeze: auto
   warning: false
-  #eval: false # uncomment to disable code execution and make worksheet
+  eval: false # uncomment to disable code execution and make worksheet
   
 ---
 
@@ -217,7 +217,10 @@ Uncomment the code below and replace species names/group with your own
 Read in function to calculate SE. This is a simple function that calculates the standard error of a vector. 
 
 ```{r}
-source("script/handy_functions.R") 
+# Function to calculate standard error ####
+se <- function(x){
+  sd(x, na.rm = TRUE)/sqrt(length(x))
+}
 
 ```
 
