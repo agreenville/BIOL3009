@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Aaron Greenville">
-<meta name="dcterms.date" content="2024-08-22">
+<meta name="dcterms.date" content="2024-08-23">
 
 <title>BIOL3009: Reconyx camera trapping data</title>
 <style>
@@ -3267,7 +3267,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 22, 2024</p>
+      <p class="date">August 23, 2024</p>
     </div>
   </div>
   
@@ -3307,8 +3307,8 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="task-1-download-and-explore-the-data">Task 1: Download and explore the data</h2>
 <p>There are two data sets supplied on Canvas with the 5 min threshold rule applied:</p>
 <ul>
-<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/38823248/download">RData file</a> (easiest to work with R)</li>
-<li>Camera data as <a href="https://canvas.sydney.edu.au/files/38823247/download">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
+<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/38833025/download">RData file</a> (easiest to work with R)</li>
+<li>Camera data as <a href="https://canvas.sydney.edu.au/files/38833028/download?">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
 </ul>
 <p>Download one of the options above.</p>
 <section id="metadata" class="level3">
@@ -3402,7 +3402,14 @@ Note
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeCol    =</span> <span class="st">&quot;DateTimeOriginal&quot;</span>,</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeFormat =</span> <span class="st">&quot;ymd HMS&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The report is list of five different data frames/tables: - events_by_species - events_by_station2 - events_by_station - survey_dates - species_by_station</p>
+<p>The report is list of five different data frames/tables:</p>
+<ul>
+<li>events_by_species</li>
+<li>events_by_station2</li>
+<li>events_by_station</li>
+<li>survey_dates</li>
+<li>species_by_station</li>
+</ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3590,7 +3597,7 @@ Note
 <h4 class="anchored" data-anchor-id="plotting-mean-species-richness-per-site">Plotting mean species richness per site</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sp.richness.plot <span class="ot">&lt;-</span> sp.richness <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(subproject_name, <span class="sc">-</span>mean), mean)) <span class="sc">+</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(subproject_name, mean)) <span class="sc">+</span> </span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position=</span><span class="fu">position_dodge</span>())<span class="sc">+</span> </span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>mean<span class="sc">-</span>se, <span class="at">ymax=</span>mean<span class="sc">+</span>se), <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>))<span class="sc">+</span> </span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
@@ -3642,7 +3649,7 @@ Note
 <h4 class="anchored" data-anchor-id="plotting-simpsons-diversity-index">Plotting Simpson’s diversity index</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>species.diversity.simpson.plot <span class="ot">&lt;-</span> species.diversity.simpson <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(subproject_name, <span class="sc">-</span>mean), mean)) <span class="sc">+</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(subproject_name, mean)) <span class="sc">+</span> </span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position=</span><span class="fu">position_dodge</span>()) <span class="sc">+</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>mean<span class="sc">-</span>se, <span class="at">ymax=</span>mean<span class="sc">+</span>se), <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>))<span class="sc">+</span> </span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Simpson&#39;s diversity index&quot;</span>) <span class="sc">+</span> </span>
@@ -3675,7 +3682,7 @@ Note
 <h4 class="anchored" data-anchor-id="plotting-shannons-diversity-index">Plotting Shannon’s diversity index</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>species.diversity.plot <span class="ot">&lt;-</span> species.diversity <span class="sc">%&gt;%</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(subproject_name, <span class="sc">-</span>mean), mean)) <span class="sc">+</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(subproject_name, mean)) <span class="sc">+</span> </span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position=</span><span class="fu">position_dodge</span>()) <span class="sc">+</span> </span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>mean<span class="sc">-</span>se, <span class="at">ymax=</span>mean<span class="sc">+</span>se), <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>,</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
