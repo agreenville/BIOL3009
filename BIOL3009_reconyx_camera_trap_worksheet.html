@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Aaron Greenville">
-<meta name="dcterms.date" content="2024-07-30">
+<meta name="dcterms.date" content="2024-08-22">
 
 <title>BIOL3009: Reconyx camera trapping data</title>
 <style>
@@ -3217,7 +3217,10 @@ window.Quarto = {
    
   <ul>
   <li><a href="#prerequisites-install-and-load-packages" id="toc-prerequisites-install-and-load-packages" class="nav-link active" data-scroll-target="#prerequisites-install-and-load-packages">Prerequisites: Install and load packages</a></li>
-  <li><a href="#task-1-download-and-explore-the-data" id="toc-task-1-download-and-explore-the-data" class="nav-link" data-scroll-target="#task-1-download-and-explore-the-data">Task 1: Download and explore the data</a></li>
+  <li><a href="#task-1-download-and-explore-the-data" id="toc-task-1-download-and-explore-the-data" class="nav-link" data-scroll-target="#task-1-download-and-explore-the-data">Task 1: Download and explore the data</a>
+  <ul class="collapse">
+  <li><a href="#metadata" id="toc-metadata" class="nav-link" data-scroll-target="#metadata">Metadata</a></li>
+  </ul></li>
   <li><a href="#task-2-time-threshold-rule" id="toc-task-2-time-threshold-rule" class="nav-link" data-scroll-target="#task-2-time-threshold-rule">Task 2: Time threshold rule</a></li>
   <li><a href="#task-3-exploring-the-data" id="toc-task-3-exploring-the-data" class="nav-link" data-scroll-target="#task-3-exploring-the-data">Task 3: Exploring the data</a>
   <ul class="collapse">
@@ -3264,7 +3267,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 30, 2024</p>
+      <p class="date">August 22, 2024</p>
     </div>
   </div>
   
@@ -3302,12 +3305,16 @@ window.Quarto = {
 </section>
 <section id="task-1-download-and-explore-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="task-1-download-and-explore-the-data">Task 1: Download and explore the data</h2>
-<p>There are two data sets supplied on Canvas:</p>
+<p>There are two data sets supplied on Canvas with the 5 min threshold rule applied:</p>
 <ul>
-<li>Camera data (5 min threshold rule applied)</li>
-<li>Camera data from Wildlife Insights (all data, except blanks and humans)</li>
+<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/38823248/download">RData file</a> (easiest to work with R)</li>
+<li>Camera data as <a href="https://canvas.sydney.edu.au/files/38823247/download">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
 </ul>
-<p>Download and unzip the file.</p>
+<p>Download one of the options above.</p>
+<section id="metadata" class="level3">
+<h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
+<p>Read the metadata for the camera data. This will give you an understanding of what each column means.</p>
+<p><a href="https://canvas.sydney.edu.au/files/38823296/download">Data-Dictionary-for-Data-Download</a></p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3318,9 +3325,10 @@ Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Explore the metadata (all the pdf documents) for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.</p>
+<p>Explore the metadata for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.</p>
 </div>
 </div>
+</section>
 </section>
 <section id="task-2-time-threshold-rule" class="level2">
 <h2 class="anchored" data-anchor-id="task-2-time-threshold-rule">Task 2: Time threshold rule</h2>
@@ -3332,22 +3340,22 @@ Important
 <h3 class="anchored" data-anchor-id="load-the-data-into-r.">Load the data into R.</h3>
 <p>Here we are using the <code>.RData</code> file, but you could also use the <code>.csv</code> files, but there is an extra step - see below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2023.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2024.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If you use the <code>.csv</code> files, you will need to read in the data and convert the date and time columns to a date-time object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/BIOL3009_Allsites_2023_5min_data.csv&quot;, header = TRUE) # change filename and path match your dataset</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/BIOL3009_WI_5min_data_2024.csv&quot;, header = TRUE) # change filename and path match your dataset</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min$DateTimeOriginal &lt;- as.POSIXct(strptime(cam.stations$timestamp, format =</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                                        &quot;%Y-%m-%d %H:%M:%S&quot;, tz = &quot;UTC&quot;)) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min$DateTimeOriginal &lt;- as.POSIXct(strptime(records_filter5_min$timestamp, format =</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                                        &quot;%Y-%m-%d %H:%M:%S&quot;, tz = &quot;UTC&quot;))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Also if you are using the <code>.csv</code> files, read in the Ctable:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/WI_Ctable.csv&quot;, header = TRUE) # change file path to match whwre you saved the file.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/Ctable.WI_2024.csv&quot;, header = TRUE) # change file path to match whwre you saved the file.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">

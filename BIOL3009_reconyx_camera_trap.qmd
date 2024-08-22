@@ -42,15 +42,22 @@ library(scales)
 
 ## Task 1: Download and explore the data
 
-There are two data sets supplied on Canvas:
+There are two data sets supplied on Canvas with the 5 min threshold rule applied:
 
--   Camera data (5 min threshold rule applied)
--   Camera data from Wildlife Insights (all data, except blanks and humans)
+-   Camera data as a [RData file](https://canvas.sydney.edu.au/files/38823248/download) (easiest to work with R)
+-   Camera data as [csv files](https://canvas.sydney.edu.au/files/38823247/download) (can be read into R or other software. Unzip the files to access the data).
 
-Download and unzip the file.
+Download one of the options above.
+
+### Metadata
+
+Read the metadata for the camera data. This will give you an understanding of what each column means. 
+
+[Data-Dictionary-for-Data-Download](https://canvas.sydney.edu.au/files/38823296/download)
+
 
 :::{.callout-important}
-Explore the metadata (all the pdf documents) for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.
+Explore the metadata for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.
 :::
 
 ## Task 2: Time threshold rule
