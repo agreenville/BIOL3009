@@ -21,7 +21,7 @@ Make sure you have a recent version of [R](https://cran.rstudio.com/) *and* [RSt
 # # Uncomment and run lines below to install packages if you don't have them:
 # 
 # # Package names
-# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble")
+# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble", "tidyr, "vegan")
 # 
 # # Install packages not yet installed
 # installed_packages <- packages %in% rownames(installed.packages())
@@ -36,6 +36,7 @@ library(ggplot2)
 library(tibble)
 library(lubridate)
 library(scales)
+library(tidyr)
 
 ```
 
@@ -190,27 +191,29 @@ unique(records_filter5_min$common_name)
 
 **Example code to combine groups:**
 
-Uncomment the code below and replace species names/group with your own
+Uncomment the code below, if needed, and replace species names/group with your own
 
 ```{r}
 
-# records_filter5_min$common_name <- recode(records_filter5_min$common_name,
-#                                           "Rattus fuscipes" = "Rattus Species",
-#                                           "Rattus norvegicus" = "Rattus Species",
-#                                           "Rattus rattus" = "Rattus Species",
-#                                           "Antechinus stuartii" = "Antechinus Species")
+records_filter5_min$common_name <- recode(records_filter5_min$common_name,
+                                          "Rodent" = "Rattus Species")
 
 
 ```
 
 **Remove groups not needed:**
 
-Uncomment the code below and replace species names/group with your own
+Example code below to remore groups not needed. Replace species names/group with your own.  
 
 ```{r}
 
-# records_filter5_min <- records_filter5_min %>%
-#   filter(common_name != "Human")
+records_filter5_min <- records_filter5_min %>%
+  filter(common_name != "Human") %>%
+  filter(common_name != "Unidentified") %>%
+  filter(common_name != "Animal") %>%
+  filter(common_name != "Bird") %>%
+  filter(common_name != "Mammal") %>%
+  filter(common_name != "Insect")
 
 ```
 
@@ -253,8 +256,27 @@ species.count <- records_filter5_min %>%
 Then add effort and calculate the mean RAI and SE per site.
 
 ::: callout-note
+
 Note the code above is using each camera per site to calculate the mean, but are they independent?
+
 :::
+  
+  
+  
+#### **Add vector with treatments for each site**  
+  
+We need to add a vector with the treatments for each site. This will allow us to compare the mean activity per treatment.
+
+Update the code below to match your sites and treatments. The example below assumes you have four sites with two new and two old treatments.
+```{r}
+
+treatments <- data.frame(subproject_name = c("Site_02", "Site_03", "Site_04", "Site_05"),
+                          Treatment = c("New", "New", "Old", "Old"))
+
+treatments
+
+```
+
 
 ```{r}
 
@@ -264,7 +286,11 @@ species.count.effort <- left_join(species.count, effort, by = "placename") %>%
   summarise_if(is.numeric, list(mean,se)) %>%
   dplyr::select(-days_fn2) %>%
   rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
-              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2"))
+              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2")) %>%
+  # add treatments
+  left_join(treatments, by = "subproject_name")
+
+glimpse(species.count.effort)
 
 ```
 
@@ -283,6 +309,45 @@ overall.site.means <- species.count.effort %>%
 overall.site.means
 
 ```
+
+### Plotting the mean number of images per treatment
+
+#### All species/groups
+
+Calculate the mean RAI and SE per treatment:
+
+```{r}
+species.count.treatments <- left_join(species.count, effort, by = "placename") %>%
+  mutate(RAI = n/days*3) %>%
+  # add treatments
+  left_join(treatments, by = "subproject_name") %>%
+  group_by(Treatment, common_name) %>%
+  summarise_if(is.numeric, list(mean,se)) %>%
+  dplyr::select(-days_fn2) %>%
+  rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
+              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2"))
+  
+
+glimpse(species.count.treatments)
+```
+
+
+```{r, fig.width=16, fig.height=14}
+overall.treatment.means <- species.count.treatments %>%
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +          geom_col(position=position_dodge())+ 
+   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+    theme_classic() + 
+    facet_wrap(~common_name, scales = "free") +
+  xlab("")
+
+
+
+overall.treatment.means
+```
+
+
+
+
 
 To save plot out uncomment the below line. Change the filename to your own.:
 
@@ -305,15 +370,15 @@ speciesToPlot <- c("Rattus Species", "Antechinus Species", "Long-nosed Bandicoot
 
 ```{r}
 
-species.site.means <- species.count.effort %>% 
+overall.treatment.means.sel <- species.count.treatments %>%
   filter(common_name %in% speciesToPlot) %>% 
-  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +
-  geom_col(position=position_dodge())+ 
-  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
-  theme_classic() + theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +          geom_col(position=position_dodge())+ 
+   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+    theme_classic() + 
+    facet_wrap(~common_name, scales = "free") +
+  xlab("")
 
-species.site.means
+overall.treatment.means.sel
 ```
 
 To save plot out uncomment the below line
@@ -324,31 +389,37 @@ To save plot out uncomment the below line
 
 ```
 
-### Species richness per site
+### Species richness per treatment, with site as replicate.
 
-Here we will calculate mean species richness per site:
+Here we will calculate mean species richness per treatment and use each site as a replicate. We will first calculate the number of distinct species per site, then calculate the mean and standard error per treatment.
 
 ```{r}
 
 sp.richness <- species.count %>% 
-  group_by(placename, subproject_name) %>% 
+  # Add treatments
+  left_join(treatments, by = "subproject_name") %>%
+  group_by(Treatment, subproject_name) %>% 
+  # Count number of distinct species per site
   summarise(n = n_distinct(common_name)) %>% 
   rename(., speciesRichness = n) %>% 
-  group_by(subproject_name) %>% 
+  # Calculate mean and standard error per treatment
+  group_by(Treatment) %>% 
   summarise(mean = mean(speciesRichness), se = se(speciesRichness))
 
 ```
 
-#### Plotting mean species richness per site
+#### Plotting mean species richness per treatment
 
 ```{r}
 
 sp.richness.plot <- sp.richness %>% 
-  ggplot(aes(subproject_name, mean)) + 
+  ggplot(aes(Treatment, mean)) + 
   geom_col(position=position_dodge())+ 
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5, position = position_dodge(width = 0.9))+ 
   theme_classic() + 
-  ylab("Mean species richness") + theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) + scale_y_continuous(expand = c(0, 0), limits = c(0,10), oob = rescale_none)
+  ylab("Mean species richness") + 
+  xlab("") +
+  scale_y_continuous(expand = c(0, 0))
 
 sp.richness.plot
 
@@ -378,30 +449,58 @@ A community with many species, but where one species dominates, will have a lowe
 
 #### Calculate Simpson's diversity index
 
-The Simpson index gives more weight to common or dominant species. The index ranges from 0 to 1.
+The Simpson index gives more weight to common or dominant species. The index ranges from 0 to 1. We will use the `vegan` package to calculate our diversity indices.
+
+First we need to format the data for the `vegan` package. We will create a wide format data frame with species as columns and sites as rows, with the number of images per species per site as the values. This is similar to the `species.count.effort` data frame we created above, but in a wide format.
 
 ```{r}
+library(vegan)
 
-species.diversity.simpson <- species.count %>% 
-  group_by(placename, subproject_name) %>%
-  mutate(proportion = n/sum(n)) %>% 
-  summarise(Simpson = 1 - sum(proportion^2)) %>%
-  group_by(subproject_name) %>% 
+# format data for vegan package
+species.count.wide <- records_filter5_min %>% 
+  group_by(subproject_name, common_name) %>%
+  tally() %>%
+  ungroup() %>%
+  pivot_wider(names_from = common_name, values_from = n, values_fill = 0)
+
+
+
+
+```
+
+
+Now we can calculate the Simpson's diversity index for each site. We will group by site and then use the `diversity` function from the `vegan` package to calculate the index.
+
+```{r}
+# calculate Simpson's diversity index per site
+Simpson <- species.count.wide %>%
+  group_by(subproject_name) %>%
+  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(Simpson = diversity(select(., -subproject_name), index = "simpson")) %>%
+  select(subproject_name, Simpson)
+
+# calc mean Simpson's Diversity index and standard error per treatment
+
+Simpson.mean <- Simpson %>%
+  left_join(treatments, by = "subproject_name") %>%
+  group_by(Treatment) %>%
   summarise(mean = mean(Simpson), se = se(Simpson))
 
 ```
+
+
 
 #### Plotting Simpson's diversity index
 
 ```{r}
 
-species.diversity.simpson.plot <- species.diversity.simpson %>% 
-  ggplot(aes(subproject_name, mean)) + 
+species.diversity.simpson.plot <- Simpson.mean %>% 
+  ggplot(aes(Treatment, mean)) + 
   geom_col(position=position_dodge()) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5, position = position_dodge(width = 0.9))+ 
-  theme_classic() + ylab("Simpson's diversity index") + 
-  theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0,1), oob = rescale_none)
+  theme_classic() + ylab("Simpson's diversity index") + xlab("")+
+ scale_y_continuous(expand = c(0, 0))
 
 species.diversity.simpson.plot
 
@@ -423,14 +522,22 @@ $$ H = -\sum_{i=1}^N p_i ln(p_i) $$
 
 where $p_i$ is the proportion of species $i$ in the community and $N$ is the number of species.
 
-We can calculate this index for each camera and take the mean for each site and plot the results, as we did above for the Simpson's index.
+We can calculate this index for each site and take the mean for each treatment and plot the results, as we did above for the Simpson's index.
 
 ```{r}
-species.diversity <- species.count %>% 
-  group_by(placename, subproject_name) %>%
-  mutate(proportion = n/sum(n)) %>% 
-  summarise(Shannon = -sum(proportion * log(proportion))) %>% 
-  group_by(subproject_name) %>% 
+# calculate Simpson's diversity index per site
+shannon <- species.count.wide %>%
+  group_by(subproject_name) %>%
+  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(Shannon = diversity(select(., -subproject_name), index = "shannon")) %>%
+  select(subproject_name, Shannon)
+
+# calc mean Simpson's Diversity index and standard error per treatment
+
+Shannon.mean <- shannon %>%
+  left_join(treatments, by = "subproject_name") %>%
+  group_by(Treatment) %>%
   summarise(mean = mean(Shannon), se = se(Shannon))
 ```
 
@@ -438,14 +545,14 @@ species.diversity <- species.count %>%
 
 ```{r}
 
-species.diversity.plot <- species.diversity %>% 
-  ggplot(aes(subproject_name, mean)) + 
+species.diversity.plot <- Shannon.mean %>% 
+  ggplot(aes(Treatment, mean)) + 
   geom_col(position=position_dodge()) + 
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5,
                 position = position_dodge(width = 0.9)) + 
-  theme_classic() + ylab("Shannon's diversity index") + 
-  theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0,2), oob = rescale_none)
+  theme_classic() + ylab("Shannon's diversity index") + xlab("") +
+ # theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +
+  scale_y_continuous(expand = c(0, 0))
 
 species.diversity.plot
 ```
