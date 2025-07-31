@@ -138,7 +138,7 @@ save(records_filter5_min, Ctable.WI,
 # Camera summary ####
 #****************************************************************************
 
-load("data/BIoL3009_WI_5min_data_2023.RData") # if needed, and change to your filename to current year
+load("data/BIoL3009_WI_5min_data_2024.RData") # if needed, and change to your filename to current year
 
 
 ### calc number of days active ####
