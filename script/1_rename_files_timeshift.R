@@ -29,16 +29,16 @@ timeshift_run <- timeShiftImages(inDir                = wd_images_ID_copy,
 # 2.Changing filenames ###
 
 # define raw image location
-wd_images_raw <- file.path("E:/BIOL3009")
+wd_images_raw <- file.path("D:/Terrestrial Ecology Camera trap Files/BIOL3009 Terrestrial Field Ecology_2025-camera/issues")
 
 # define destination for renamed images
-wd_images_raw_renamed <- file.path("E:/BIOL3009_renamed")       
+wd_images_raw_renamed <- file.path("D:/Terrestrial Ecology Camera trap Files/BIOL3009_2025_rename2")       
 
 
 
 renaming.table2 <- imageRename(inDir               = wd_images_raw,
                                outDir              = wd_images_raw_renamed,       
-                               hasCameraFolders    = TRUE,
+                               hasCameraFolders    = FALSE,
                                keepCameraSubfolders = TRUE,
                                copyImages          = TRUE,
                                writecsv            = TRUE
