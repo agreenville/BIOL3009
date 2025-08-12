@@ -10,10 +10,12 @@ format:
 execute:
   freeze: auto
   warning: false
-  #eval: false # uncomment to disable code execution and make worksheet
+  eval: false # uncomment to disable code execution and make worksheet
 ---
 
 ## Prerequisites: Install and load packages
+
+Note you can download this RStudio project with the code from [GitHub](https://github.sydney.edu.au/agre6595/BIOL3009) (unikey required) or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.
 
 Make sure you have a recent version of [R](https://cran.rstudio.com/) *and* [RStudio](https://posit.co/download/rstudio-desktop/) installed (they are not the same thing). You will also need to install the following packages:
 
@@ -71,7 +73,7 @@ Here we are using the `.RData` file, but you could also use the `.csv` files, bu
 
 ```{r}
 
-load("data/BIoL3009_WI_5min_data_2024.RData") # change filename and path match your dataset
+load("data/BIoL3009_WI_5min_data_2025.RData") # change filename and path match your dataset
 
 ```
 
