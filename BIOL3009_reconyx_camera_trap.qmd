@@ -219,7 +219,7 @@ records_filter5_min <- records_filter5_min %>%
 
 ```
 
-## Task 5: Activity and diversity per site
+## Task 5: Activity and diversity per site and treatment
 
 Read in function to calculate SE. This is a simple function that calculates the standard error of a vector.
 

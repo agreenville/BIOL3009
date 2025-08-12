@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Aaron Greenville">
-<meta name="dcterms.date" content="2025-07-31">
+<meta name="dcterms.date" content="2025-08-12">
 
 <title>BIOL3009: Reconyx camera trapping data</title>
 <style>
@@ -3242,7 +3242,7 @@ window.Quarto = {
   <li><a href="#calculate-survey-effort" id="toc-calculate-survey-effort" class="nav-link" data-scroll-target="#calculate-survey-effort">Calculate survey effort</a></li>
   </ul></li>
   <li><a href="#task-4-creatingcombining-taxa-or-species-groups." id="toc-task-4-creatingcombining-taxa-or-species-groups." class="nav-link" data-scroll-target="#task-4-creatingcombining-taxa-or-species-groups.">Task 4: Creating/combining taxa or species groups.</a></li>
-  <li><a href="#task-5-activity-and-diversity-per-site" id="toc-task-5-activity-and-diversity-per-site" class="nav-link" data-scroll-target="#task-5-activity-and-diversity-per-site">Task 5: Activity and diversity per site</a>
+  <li><a href="#task-5-activity-and-diversity-per-site-and-treatment" id="toc-task-5-activity-and-diversity-per-site-and-treatment" class="nav-link" data-scroll-target="#task-5-activity-and-diversity-per-site-and-treatment">Task 5: Activity and diversity per site and treatment</a>
   <ul class="collapse">
   <li><a href="#calculate-the-mean-activity-per-site-number-of-images-per-species" id="toc-calculate-the-mean-activity-per-site-number-of-images-per-species" class="nav-link" data-scroll-target="#calculate-the-mean-activity-per-site-number-of-images-per-species">Calculate the mean activity per site (number of images per species)</a></li>
   <li><a href="#plotting-the-mean-number-of-images-per-species-per-site" id="toc-plotting-the-mean-number-of-images-per-species-per-site" class="nav-link" data-scroll-target="#plotting-the-mean-number-of-images-per-species-per-site">Plotting the mean number of images per species per site</a></li>
@@ -3280,7 +3280,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 31, 2025</p>
+      <p class="date">August 12, 2025</p>
     </div>
   </div>
   
@@ -3294,6 +3294,7 @@ window.Quarto = {
 
 <section id="prerequisites-install-and-load-packages" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites-install-and-load-packages">Prerequisites: Install and load packages</h2>
+<p>Note you can download this RStudio project with the code from <a href="https://github.sydney.edu.au/agre6595/BIOL3009">GitHub</a> (unikey required) or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.</p>
 <p>Make sure you have a recent version of <a href="https://cran.rstudio.com/">R</a> <em>and</em> <a href="https://posit.co/download/rstudio-desktop/">RStudio</a> installed (they are not the same thing). You will also need to install the following packages:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment and run lines below to install packages if you don&#39;t have them:</span></span>
@@ -3354,7 +3355,7 @@ Important
 <h3 class="anchored" data-anchor-id="load-the-data-into-r.">Load the data into R.</h3>
 <p>Here we are using the <code>.RData</code> file, but you could also use the <code>.csv</code> files, but there is an extra step - see below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2024.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2025.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If you use the <code>.csv</code> files, you will need to read in the data and convert the date and time columns to a date-time object.</p>
 <div class="cell">
@@ -3505,8 +3506,8 @@ Tip
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(common_name <span class="sc">!=</span> <span class="st">&quot;Insect&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="task-5-activity-and-diversity-per-site" class="level2">
-<h2 class="anchored" data-anchor-id="task-5-activity-and-diversity-per-site">Task 5: Activity and diversity per site</h2>
+<section id="task-5-activity-and-diversity-per-site-and-treatment" class="level2">
+<h2 class="anchored" data-anchor-id="task-5-activity-and-diversity-per-site-and-treatment">Task 5: Activity and diversity per site and treatment</h2>
 <p>Read in function to calculate SE. This is a simple function that calculates the standard error of a vector.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate standard error ####</span></span>
