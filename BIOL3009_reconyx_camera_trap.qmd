@@ -10,7 +10,7 @@ format:
 execute:
   freeze: auto
   warning: false
-  eval: false # uncomment to disable code execution and make worksheet
+  #eval: false # uncomment to disable code execution and make worksheet
 ---
 
 ## Prerequisites: Install and load packages
@@ -46,8 +46,8 @@ library(tidyr)
 
 There are two data sets supplied on Canvas with the 5 min threshold rule applied:
 
--   Camera data as a [RData file](https://canvas.sydney.edu.au/files/38833025/download) (easiest to work with R)
--   Camera data as [csv files](https://canvas.sydney.edu.au/files/38833028/download?) (can be read into R or other software. Unzip the files to access the data).
+-   Camera data as a [RData file](https://canvas.sydney.edu.au/files/45129287/download?) (easiest to work with R)
+-   Camera data as [csv files](https://canvas.sydney.edu.au/files/45129284/download?) (can be read into R or other software. Unzip the files to access the data).
 
 Download one of the options above.
 
@@ -127,7 +127,11 @@ str(camop_op)
 Explore the data and generate a summary report. This will provide information on the number of images per species per camera and other operational information.
 
 ```{r}
+# remove blank images
+records_filter5_min <- records_filter5_min %>%
+  filter(common_name != "Blank")
 
+#run report
 report <- surveyReport(recordTable          = records_filter5_min,
                         CTtable              = Ctable.WI,
                         camOp                = camop_op,
@@ -272,8 +276,8 @@ We need to add a vector with the treatments for each site. This will allow us to
 Update the code below to match your sites and treatments. The example below assumes you have four sites with two new and two old treatments.
 ```{r}
 
-treatments <- data.frame(subproject_name = c("Site_02", "Site_03", "Site_04", "Site_05"),
-                          Treatment = c("New", "New", "Old", "Old"))
+treatments <- data.frame(subproject_name = c("Site_01", "Site_02", "Site_03", "Site_04", "Site_05"),
+                          Treatment = c("Younger regrowth", "Younger regrowth", "Younger regrowth", "Older regrowth", "Older regrowth"))
 
 treatments
 
@@ -302,11 +306,14 @@ glimpse(species.count.effort)
 
 ```{r}
 overall.site.means <- species.count.effort %>%
-  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=subproject_name, fill=subproject_name)) +     geom_col(position=position_dodge())+ 
-   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
-    theme_classic() + 
-    theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +  
-    scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+  ggplot(aes(reorder(common_name, -RAI_mean), 
+             RAI_mean, colour=subproject_name,   fill=subproject_name)) +
+  geom_col(position=position_dodge())+ 
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se),
+                 color="black", width=.5, position = position_dodge(width = 0.9)) + 
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +  
+  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
 
 overall.site.means
 

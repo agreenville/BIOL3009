@@ -34,11 +34,11 @@ library(lubridate)
 
 ## Change filenames and path to suit your data
 
-cam <- read.csv("data/2024/images_2004409.csv",
+cam <- read.csv("data/2025/images_2004409.csv",
                 header = TRUE)
 
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/2024/deployments.csv", 
+stations <- read.csv("data/2025/deployments.csv", 
                      header = TRUE)
  
 # join station locations with effort
@@ -81,14 +81,14 @@ cam.stations$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, for
 #                                                           'camera_id') ]), ]
 
 
-# records_filter5_min <- camtrapR:::assessTemporalIndependence(intable = cam.stations,
-#                                                                    deltaTimeComparedTo = "lastIndependentRecord",  
-#                                                                    columnOfInterest = "common_name", # species name 
-#                                                                    stationCol = "deployment_id",
-#                                                                    cameraCol = "placename",
-#                                                                    camerasIndependent = TRUE,
-#                                                                    minDeltaTime = 5 # 5 min threshold for independence
-# )
+records_filter5_min <- camtrapR:::assessTemporalIndependence(intable = cam.stations,
+                                                                   deltaTimeComparedTo = "lastIndependentRecord",
+                                                                   columnOfInterest = "common_name", # species name
+                                                                   stationCol = "deployment_id",
+                                                                   cameraCol = "placename",
+                                                                   camerasIndependent = TRUE,
+                                                                   minDeltaTime = 5 # 5 min threshold for independence
+)
 
 # OR use camtrapRdeluxe (faster)....
 
@@ -100,15 +100,15 @@ cam.stations$DateTimeOriginal <- as.POSIXct(strptime(cam.stations$timestamp, for
 # Warning this is not yet a completed package but it seems to be working for
 # the purposes we require.
 # Note working under R.4.2.x or below. Have had issues working in 4.3.x
-
-records_filter5_min <- camtrapRdeluxe:::assessTemporalIndependence(intable = cam.stations,
-                                                                   deltaTimeComparedTo = "lastIndependentRecord",  
-                                                                   columnOfInterest = "common_name", # species name 
-                                                                   stationCol = "deployment_id",
-                                                                   cameraCol = "placename",
-                                                                   camerasIndependent = TRUE,
-                                                                   minDeltaTime = 5 # 5 min threshold for independence
-)
+# 
+# records_filter5_min <- camtrapRdeluxe:::assessTemporalIndependence(intable = cam.stations,
+#                                                                    deltaTimeComparedTo = "lastIndependentRecord",  
+#                                                                    columnOfInterest = "common_name", # species name 
+#                                                                    stationCol = "deployment_id",
+#                                                                    cameraCol = "placename",
+#                                                                    camerasIndependent = TRUE,
+#                                                                    minDeltaTime = 5 # 5 min threshold for independence
+# )
 
 
 str(records_filter5_min)
@@ -119,11 +119,11 @@ unique(records_filter5_min$common_name)
 
 ## Save records ####
 write.csv(records_filter5_min,
-          "data/BIOL3009_WI_5min_data_2024.csv", # change filename
+          "data/BIOL3009_WI_5min_data_2025.csv", # change filename
           row.names = FALSE)
 
 write.csv(Ctable.WI,
-          "data/Ctable.WI_2024.csv", # change filename
+          "data/Ctable.WI_2025.csv", # change filename
           row.names = FALSE)
 
 # Save both record table and CTable out into an .RData file
@@ -132,7 +132,7 @@ write.csv(Ctable.WI,
 # Note code below assumes you have a folder called data in your
 # working dir.
 save(records_filter5_min, Ctable.WI,
-     file = "data/BIoL3009_WI_5min_data_2024.RData") # change filename
+     file = "data/BIoL3009_WI_5min_data_2025.RData") # change filename
 
 #****************************************************************************
 # Camera summary ####
