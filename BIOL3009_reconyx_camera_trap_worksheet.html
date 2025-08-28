@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Aaron Greenville">
-<meta name="dcterms.date" content="2025-08-12">
+<meta name="dcterms.date" content="2025-08-28">
 
 <title>BIOL3009: Reconyx camera trapping data</title>
 <style>
@@ -3280,7 +3280,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 12, 2025</p>
+      <p class="date">August 28, 2025</p>
     </div>
   </div>
   
@@ -3322,8 +3322,8 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="task-1-download-and-explore-the-data">Task 1: Download and explore the data</h2>
 <p>There are two data sets supplied on Canvas with the 5 min threshold rule applied:</p>
 <ul>
-<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/38833025/download">RData file</a> (easiest to work with R)</li>
-<li>Camera data as <a href="https://canvas.sydney.edu.au/files/38833028/download?">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
+<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/45129287/download?">RData file</a> (easiest to work with R)</li>
+<li>Camera data as <a href="https://canvas.sydney.edu.au/files/45129284/download?">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
 </ul>
 <p>Download one of the options above.</p>
 <section id="metadata" class="level3">
@@ -3406,16 +3406,21 @@ Note
 <h3 class="anchored" data-anchor-id="summary-report">Summary report</h3>
 <p>Explore the data and generate a summary report. This will provide information on the number of images per species per camera and other operational information.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>report <span class="ot">&lt;-</span> <span class="fu">surveyReport</span>(<span class="at">recordTable          =</span> records_filter5_min,</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">CTtable              =</span> Ctable.WI,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">camOp                =</span> camop_op,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">speciesCol           =</span> <span class="st">&quot;common_name&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">stationCol           =</span> <span class="st">&quot;placename&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">setupCol             =</span> <span class="st">&quot;start_date&quot;</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">retrievalCol         =</span> <span class="st">&quot;end_date&quot;</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">CTDateFormat         =</span> <span class="st">&quot;ymd&quot;</span>, </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeCol    =</span> <span class="st">&quot;DateTimeOriginal&quot;</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeFormat =</span> <span class="st">&quot;ymd HMS&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove blank images</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>records_filter5_min <span class="ot">&lt;-</span> records_filter5_min <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(common_name <span class="sc">!=</span> <span class="st">&quot;Blank&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#run report</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>report <span class="ot">&lt;-</span> <span class="fu">surveyReport</span>(<span class="at">recordTable          =</span> records_filter5_min,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">CTtable              =</span> Ctable.WI,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">camOp                =</span> camop_op,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">speciesCol           =</span> <span class="st">&quot;common_name&quot;</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">stationCol           =</span> <span class="st">&quot;placename&quot;</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">setupCol             =</span> <span class="st">&quot;start_date&quot;</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">retrievalCol         =</span> <span class="st">&quot;end_date&quot;</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                        <span class="at">CTDateFormat         =</span> <span class="st">&quot;ymd&quot;</span>, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeCol    =</span> <span class="st">&quot;DateTimeOriginal&quot;</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recordDateTimeFormat =</span> <span class="st">&quot;ymd HMS&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The report is list of five different data frames/tables:</p>
 <ul>
@@ -3551,8 +3556,8 @@ Note
 <p>We need to add a vector with the treatments for each site. This will allow us to compare the mean activity per treatment.</p>
 <p>Update the code below to match your sites and treatments. The example below assumes you have four sites with two new and two old treatments.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>treatments <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">subproject_name =</span> <span class="fu">c</span>(<span class="st">&quot;Site_02&quot;</span>, <span class="st">&quot;Site_03&quot;</span>, <span class="st">&quot;Site_04&quot;</span>, <span class="st">&quot;Site_05&quot;</span>),</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Treatment =</span> <span class="fu">c</span>(<span class="st">&quot;New&quot;</span>, <span class="st">&quot;New&quot;</span>, <span class="st">&quot;Old&quot;</span>, <span class="st">&quot;Old&quot;</span>))</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>treatments <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">subproject_name =</span> <span class="fu">c</span>(<span class="st">&quot;Site_01&quot;</span>, <span class="st">&quot;Site_02&quot;</span>, <span class="st">&quot;Site_03&quot;</span>, <span class="st">&quot;Site_04&quot;</span>, <span class="st">&quot;Site_05&quot;</span>),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Treatment =</span> <span class="fu">c</span>(<span class="st">&quot;Younger regrowth&quot;</span>, <span class="st">&quot;Younger regrowth&quot;</span>, <span class="st">&quot;Younger regrowth&quot;</span>, <span class="st">&quot;Older regrowth&quot;</span>, <span class="st">&quot;Older regrowth&quot;</span>))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>treatments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -3577,13 +3582,16 @@ Note
 <h4 class="anchored" data-anchor-id="all-speciesgroups">All species/groups</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>overall.site.means <span class="ot">&lt;-</span> species.count.effort <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(common_name, <span class="sc">-</span>RAI_mean), RAI_mean, <span class="at">colour=</span>subproject_name, <span class="at">fill=</span>subproject_name)) <span class="sc">+</span>     <span class="fu">geom_col</span>(<span class="at">position=</span><span class="fu">position_dodge</span>())<span class="sc">+</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>RAI_mean<span class="sc">-</span>RAI_se, <span class="at">ymax=</span>RAI_mean<span class="sc">+</span>RAI_se), <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">60</span>, <span class="at">hjust=</span><span class="dv">1</span>), <span class="at">axis.title.x=</span><span class="fu">element_blank</span>()) <span class="sc">+</span>  </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">17</span>), <span class="at">oob =</span> rescale_none)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>overall.site.means</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(common_name, <span class="sc">-</span>RAI_mean), </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             RAI_mean, <span class="at">colour=</span>subproject_name,   <span class="at">fill=</span>subproject_name)) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position=</span><span class="fu">position_dodge</span>())<span class="sc">+</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>RAI_mean<span class="sc">-</span>RAI_se, <span class="at">ymax=</span>RAI_mean<span class="sc">+</span>RAI_se),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">60</span>, <span class="at">hjust=</span><span class="dv">1</span>), <span class="at">axis.title.x=</span><span class="fu">element_blank</span>()) <span class="sc">+</span>  </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">17</span>), <span class="at">oob =</span> rescale_none)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>overall.site.means</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
