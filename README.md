@@ -1,7 +1,7 @@
 
 # BIOL3009
 
-R scripts for BIOL3009 Terrestrial Field Ecology.\
+Companion information and R scripts for BIOL3009 Terrestrial Field Ecology.\
 Aaron Greenville ([aaron.greenville\@sydney.edu.au](mailto:aaron.greenville@sydney.edu.au))
 
 ## Overview
