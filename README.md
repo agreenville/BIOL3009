@@ -42,7 +42,9 @@ You will need:
 
 - See Canvas for more information.
 
+
 ![Swamp Wallaby. Chichester State Forest, NSW.](deployment_2310259.JPG){width="442"}
+
 
 ## Image preparation and upload to Wildlife Insights workflow
 
