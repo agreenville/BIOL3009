@@ -23,7 +23,7 @@ Make sure you have a recent version of [R](https://cran.rstudio.com/) *and* [RSt
 # # Uncomment and run lines below to install packages if you don't have them:
 # 
 # # Package names
-# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble", "tidyr, "vegan")
+# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble", "tidyr", "vegan")
 # 
 # # Install packages not yet installed
 # installed_packages <- packages %in% rownames(installed.packages())
@@ -253,9 +253,22 @@ First we count up number of photos per species:
 
 ```{r}
 
-species.count <- records_filter5_min %>% 
+species.count <- records_filter5_min %>%
   group_by(placename, camera_name, common_name, subproject_name) %>%
   tally()
+
+```
+
+::: callout-important
+`species.count` only has a row for a placename/species combination if that species was actually photographed there. Before calculating RAI we need to add explicit zero counts for species that were not detected at a camera - otherwise cameras with no detections of a species are left out of the mean entirely (rather than contributing an RAI of 0), which inflates the mean RAI and shrinks the SE.
+:::
+
+```{r}
+
+species.count.complete <- species.count %>%
+  ungroup() %>%
+  complete(common_name, nesting(placename, camera_name, subproject_name),
+           fill = list(n = 0))
 
 ```
 
@@ -286,13 +299,12 @@ treatments
 
 ```{r}
 
-species.count.effort <- left_join(species.count, effort, by = "placename") %>%
+species.count.effort <- left_join(species.count.complete, effort, by = "placename") %>%
   mutate(RAI = n/days*3) %>%
   group_by(subproject_name, common_name) %>%
-  summarise_if(is.numeric, list(mean,se)) %>%
-  dplyr::select(-days_fn2) %>%
-  rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
-              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2")) %>%
+  summarise(across(where(is.numeric), list(mean = mean, se = se))) %>%
+  dplyr::select(-days_se) %>%
+  rename(mean = n_mean, days = days_mean, se_mean = n_se) %>%
   # add treatments
   left_join(treatments, by = "subproject_name")
 
@@ -326,15 +338,14 @@ overall.site.means
 Calculate the mean RAI and SE per treatment:
 
 ```{r}
-species.count.treatments <- left_join(species.count, effort, by = "placename") %>%
+species.count.treatments <- left_join(species.count.complete, effort, by = "placename") %>%
   mutate(RAI = n/days*3) %>%
   # add treatments
   left_join(treatments, by = "subproject_name") %>%
   group_by(Treatment, common_name) %>%
-  summarise_if(is.numeric, list(mean,se)) %>%
-  dplyr::select(-days_fn2) %>%
-  rename(., c(mean = "n_fn1", days =  "days_fn1", se_mean = "n_fn2",
-              RAI_mean = "RAI_fn1", RAI_se = "RAI_fn2"))
+  summarise(across(where(is.numeric), list(mean = mean, se = se))) %>%
+  dplyr::select(-days_se) %>%
+  rename(mean = n_mean, days = days_mean, se_mean = n_se)
   
 
 glimpse(species.count.treatments)
@@ -450,7 +461,7 @@ $$ D = 1 - \sum_{i=1}^Np_i^2$$
 
 where $p_i$ is the proportion of species i in the community and $N$ is the number of species.
 
-We can calculate this for each camera and take the mean for each and plot the results. This is a measure of species diversity, not richness. Richness is the number of species present in a community, while diversity is a measure of the number of species and their relative abundance.
+We will pool the records from all cameras within each site, calculate the index per site, and then take the mean and SE across sites within each treatment (site is the replicate here, the same approach used for species richness above). This is a measure of species diversity, not richness. Richness is the number of species present in a community, while diversity is a measure of the number of species and their relative abundance.
 
 ::: callout-note
 A community with many species, but where one species dominates, will have a lower diversity than a community with fewer species but where they are more evenly distributed.
@@ -484,7 +495,7 @@ Now we can calculate the Simpson's diversity index for each site. We will group 
 # calculate Simpson's diversity index per site
 Simpson <- species.count.wide %>%
   group_by(subproject_name) %>%
-  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  summarise(across(everything(), \(x) sum(x, na.rm = TRUE))) %>%
   ungroup() %>%
   mutate(Simpson = diversity(select(., -subproject_name), index = "simpson")) %>%
   select(subproject_name, Simpson)
@@ -537,7 +548,7 @@ We can calculate this index for each site and take the mean for each treatment a
 # calculate Simpson's diversity index per site
 shannon <- species.count.wide %>%
   group_by(subproject_name) %>%
-  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  summarise(across(everything(), \(x) sum(x, na.rm = TRUE))) %>%
   ungroup() %>%
   mutate(Shannon = diversity(select(., -subproject_name), index = "shannon")) %>%
   select(subproject_name, Shannon)
