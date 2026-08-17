@@ -50,16 +50,16 @@ list.files(wd_images_raw_renamed, recursive = TRUE)
 # output table
 renaming.table2
 
-# 3. moving files into subfolders containing <10k of images ####
+# 3. moving files into subfolders containing <15k of images ####
 ## for uploading to WI
 
 ## folder with all the renames images
-folder.images <- file.path("D:/2022_12_rename/Burnt_1/B1_11/BM72/")
+folder.images <- file.path("D:/Terrestrial Ecology Camera trap Files/BIOL3009_2026_rename/site_03/trap_04/")
 
 AllFiles <- list.files(folder.images)
 
 ## Make all of the new sub-folders
-FolderNumber <- floor(1:length(AllFiles)/10000) + 1 # note 10,000 here means organise by groups of 10k images. Change for a different size.
+FolderNumber <- floor(1:length(AllFiles)/15000) + 1 # note 10,000 here means organise by groups of 10k images. Change for a different size.
 FolderName <- sprintf("Folder%03d", FolderNumber)
 
 for(f in unique(FolderName)) { dir.create(paste(folder.images, f, sep="/")) }
