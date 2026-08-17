@@ -17,6 +17,9 @@ Below is a summary of the two labs you will do, but also it is important to show
 
 ### Lab 1: Verifying AI image identification and tagging images on Wildlife Insights.
 
+During this lab you will learn how to identify species in camera trap images and use Wildlife Insights to verify AI image identification and tag images.
+After this lab you will have all the images tagged and ready for download and analysing in the next lab.
+
 You will need:
 
 - Signed up on Wildlife Insights and have access to the BIOL3009 project.
@@ -29,13 +32,14 @@ You will need:
 
 ### Lab 2: Using CamTrapR to process camera trap data.
 
-Here you will work in small groups and use the R package CamTrapR to process camera trap data that has been downloaded from Wildlife Insights. You will then use the processed data to answer ecological questions.
+Here you will work in small groups and use the R package CamTrapR to analysis camera trap data that has been downloaded from Wildlife Insights. You will then use the processed data to answer ecological questions, such as are there any differences in species or diversity between treatments? Does diel activity time vary across a 24hr period?
+
 
 You will need:
 
 -  `BIOL3009_reconyx_camera_trap_worksheet.html` worksheet.
 
-- See Canvas for more information.
+- See Canvas for more information for the worksheet.
 
 
 ![Swamp Wallaby. Chichester State Forest, NSW.](deployment_2310259.JPG)
