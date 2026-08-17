@@ -10,6 +10,7 @@ Our overall aim for the unit is to understand the variation of vegetation and an
 
 Here we focus on preparing the camera trap data for processing on Wildlife Insights - a platform for managing camera trap data and identifying animals in the images, using AI assistance. The Wildlife Insights platform is used by many organisations and researchers around the world to manage camera trap data.
 
+There are 12 camera traps per site set at every even trap number (i.e. 2, 4, 6, 8, 10, 12 etc) and are set to take photos in bursts of three. The cameras are set to take photos during the day and night.
 Students will be involved in identifying animals in the images, and then using the processed data to answer ecological questions.
 
 Below is a summary of the two labs you will do, but also it is important to show you an overview of the entire workflow we have developed for our research programs.
