@@ -106,3 +106,6 @@ Once all images are processed, staff will download the data from Wildlife Insigh
 ## Additional files
 
 `BIOL3009_reconyx_camera_trap_worksheet.html` - Worksheet for students to process camera trap data from Reconyx cameras.
+
+### Notes:
+- usyd → github.sydney.edu.au/agre6595/BIOL3009 — still available, push there explicitly with git push usyd main if you ever need to keep it in sync too.
