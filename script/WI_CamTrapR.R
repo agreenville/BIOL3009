@@ -119,11 +119,11 @@ unique(records_filter5_min$common_name)
 
 ## Save records ####
 write.csv(records_filter5_min,
-          "data/BIOL3009_WI_5min_data_2026.csv", # change filename
+          "data/2026/BIOL3009_WI_5min_data_2026.csv", # change filename
           row.names = FALSE)
 
 write.csv(Ctable.WI,
-          "data/Ctable.WI_2026.csv", # change filename
+          "data/2026/Ctable.WI_2026.csv", # change filename
           row.names = FALSE)
 
 # Save both record table and CTable out into an .RData file
@@ -132,7 +132,7 @@ write.csv(Ctable.WI,
 # Note code below assumes you have a folder called data in your
 # working dir.
 save(records_filter5_min, Ctable.WI,
-     file = "data/BIoL3009_WI_5min_data_2026.RData") # change filename
+     file = "data/2026/BIoL3009_WI_5min_data_2026.RData") # change filename
 
 #****************************************************************************
 # Camera summary ####
