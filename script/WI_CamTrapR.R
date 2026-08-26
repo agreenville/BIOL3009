@@ -34,11 +34,11 @@ library(lubridate)
 
 ## Change filenames and path to suit your data
 
-cam <- read.csv("data/2025/images_2004409.csv",
+cam <- read.csv("data/2026/images_2004409.csv",
                 header = TRUE)
 
 ## Load camera station/deployments from WI ####
-stations <- read.csv("data/2025/deployments.csv", 
+stations <- read.csv("data/2026/deployments.csv", 
                      header = TRUE)
  
 # join station locations with effort
@@ -119,11 +119,11 @@ unique(records_filter5_min$common_name)
 
 ## Save records ####
 write.csv(records_filter5_min,
-          "data/BIOL3009_WI_5min_data_2025.csv", # change filename
+          "data/BIOL3009_WI_5min_data_2026.csv", # change filename
           row.names = FALSE)
 
 write.csv(Ctable.WI,
-          "data/Ctable.WI_2025.csv", # change filename
+          "data/Ctable.WI_2026.csv", # change filename
           row.names = FALSE)
 
 # Save both record table and CTable out into an .RData file
@@ -132,13 +132,13 @@ write.csv(Ctable.WI,
 # Note code below assumes you have a folder called data in your
 # working dir.
 save(records_filter5_min, Ctable.WI,
-     file = "data/BIoL3009_WI_5min_data_2025.RData") # change filename
+     file = "data/BIoL3009_WI_5min_data_2026.RData") # change filename
 
 #****************************************************************************
 # Camera summary ####
 #****************************************************************************
 
-load("data/BIoL3009_WI_5min_data_2024.RData") # if needed, and change to your filename to current year
+#load("data/BIoL3009_WI_5min_data_2024.RData") # if needed, and change to your filename to current year
 
 
 ### calc number of days active ####
