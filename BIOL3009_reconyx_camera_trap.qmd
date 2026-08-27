@@ -10,20 +10,20 @@ format:
 execute:
   freeze: auto
   warning: false
-  #eval: false # uncomment to disable code execution and make worksheet
+  eval: false # uncomment to disable code execution and make worksheet
 ---
 
 ## Prerequisites: Install and load packages
 
-Note you can download this RStudio project with the code from [GitHub](https://github.sydney.edu.au/agre6595/BIOL3009) (unikey required) or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.
+Note you can download this RStudio project with the code from [GitHub](https://github.com/agreenville/BIOL3009){target="_blank"} or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.
 
-Make sure you have a recent version of [R](https://cran.rstudio.com/) *and* [RStudio](https://posit.co/download/rstudio-desktop/) installed (they are not the same thing). You will also need to install the following packages:
+Make sure you have a recent version of [R](https://cran.rstudio.com/){target="_blank"} *and* [RStudio](https://posit.co/download/rstudio-desktop/){target="_blank"} installed (they are not the same thing). You will also need to install the following packages:
 
 ```{r}
 # # Uncomment and run lines below to install packages if you don't have them:
 # 
 # # Package names
-# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble", "tidyr", "vegan")
+# packages <- c("ggplot2", "camtrapR", "lubridate", "scales", "dplyr", "tibble", "tidyr", "vegan", "overlap")
 # 
 # # Install packages not yet installed
 # installed_packages <- packages %in% rownames(installed.packages())
@@ -46,8 +46,9 @@ library(tidyr)
 
 There are two data sets supplied on Canvas with the 5 min threshold rule applied:
 
--   Camera data as a [RData file](https://canvas.sydney.edu.au/files/45129287/download?) (easiest to work with R)
--   Camera data as [csv files](https://canvas.sydney.edu.au/files/45129284/download?) (can be read into R or other software. Unzip the files to access the data).
+-   Camera data as a [RData file](https://github.com/agreenville/BIOL3009/raw/refs/heads/main/data/2026/BIoL3009_WI_5min_data_2026.RData){target="_blank"} (easiest to work with R)
+-   Camera data as [csv files-images](https://github.com/agreenville/BIOL3009/blob/main/data/2026/BIOL3009_WI_5min_data_2026.csv){target="_blank"} (can be read into R or other software).
+-  Camera data as [csv files-ctable](https://github.com/agreenville/BIOL3009/blob/main/data/2026/Ctable.WI_2026.csv){target="_blank"} (can be read into R or other software - If the file doesn't automatically download click the download icon in the top right above the data).
 
 Download one of the options above.
 
@@ -55,7 +56,7 @@ Download one of the options above.
 
 Read the metadata for the camera data. This will give you an understanding of what each column means.
 
-[Data-Dictionary-for-Data-Download](https://canvas.sydney.edu.au/files/38823296/download)
+[Data-Dictionary-for-Data-Download](https://github.com/agreenville/BIOL3009/blob/main/data/2026/Data-Dictionary-for-Data-Download.pdf){target="_blank"}
 
 ::: callout-important
 Explore the metadata for the Camera data from Wildlife Insights to gain an understanding of what all the columns mean.
@@ -69,11 +70,11 @@ Discuss with your group what time threshold would be most appropriate to remove 
 
 ### Load the data into R.
 
-Here we are using the `.RData` file, but you could also use the `.csv` files, but there is an extra step - see below.
+Here we are using the `.RData` file, but you could also use the `.csv` files, but there is an extra step - see below. Note the code below assumes you have save the data into the `data/2026` folder in your RStudio project. Change the path to match where you saved the data.
 
 ```{r}
 
-load("data/BIoL3009_WI_5min_data_2025.RData") # change filename and path match your dataset
+load("data/2026/BIoL3009_WI_5min_data_2026.RData") # change filename and path match your dataset
 
 ```
 
@@ -82,7 +83,7 @@ If you use the `.csv` files, you will need to read in the data and convert the d
 ```{r}
 # # Uncomment to run if using the .csv file
 
-# records_filter5_min <- read.csv("data/BIOL3009_WI_5min_data_2024.csv", header = TRUE) # change filename and path match your dataset
+# records_filter5_min <- read.csv("data/2026/BIOL3009_WI_5min_data_2026.csv", header = TRUE) # change filename and path match your dataset
 # 
 # records_filter5_min$DateTimeOriginal <- as.POSIXct(strptime(records_filter5_min$timestamp, format =
 #                                                        "%Y-%m-%d %H:%M:%S", tz = "UTC"))
@@ -95,14 +96,14 @@ Also if you are using the `.csv` files, read in the Ctable:
 
 # # Uncomment to run if using the .csv file
 
-# Ctable.WI <- read.csv("data/Ctable.WI_2024.csv", header = TRUE) # change file path to match whwre you saved the file.
+# Ctable.WI <- read.csv("data/2026/Ctable.WI_2026.csv", header = TRUE) # change file path to match whwre you saved the file.
 
 ```
 
 ::: callout-note
 We are going to use the power of the CamTrapR package to summarise the camera data. This will allow us to calculate the number of days each camera was operational, the number of images per species per camera, and the survey effort for each camera.
 
-For more information on the CamTrapR package, see the [documentation](https://cran.r-project.org/web/packages/camtrapR/camtrapR.pdf).
+For more information on the CamTrapR package, see the [documentation](https://cran.r-project.org/web/packages/camtrapR/camtrapR.pdf){target="_blank"}.
 :::
 
 ### Calculate the number of days active each camera was operational
@@ -325,7 +326,7 @@ overall.site.means <- species.count.effort %>%
                  color="black", width=.5, position = position_dodge(width = 0.9)) + 
   theme_classic() + 
   theme(axis.text.x = element_text(angle=60, hjust=1), axis.title.x=element_blank()) +  
-  scale_y_continuous(expand = c(0, 0), limits = c(0,17), oob = rescale_none)
+  scale_y_continuous(expand = c(0, 0), limits = c(0,20), oob = rescale_none)
 
 overall.site.means
 

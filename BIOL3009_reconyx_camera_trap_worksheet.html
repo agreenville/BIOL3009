@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Aaron Greenville">
-<meta name="dcterms.date" content="2026-08-17">
+<meta name="dcterms.date" content="2026-08-27">
 
 <title>BIOL3009: Reconyx camera trapping data</title>
 <style>
@@ -2400,7 +2400,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 17, 2026</p>
+      <p class="date">August 27, 2026</p>
     </div>
   </div>
   
@@ -2414,13 +2414,13 @@ window.Quarto = {
 
 <section id="prerequisites-install-and-load-packages" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites-install-and-load-packages">Prerequisites: Install and load packages</h2>
-<p>Note you can download this RStudio project with the code from <a href="https://github.sydney.edu.au/agre6595/BIOL3009">GitHub</a> (unikey required) or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.</p>
-<p>Make sure you have a recent version of <a href="https://cran.rstudio.com/">R</a> <em>and</em> <a href="https://posit.co/download/rstudio-desktop/">RStudio</a> installed (they are not the same thing). You will also need to install the following packages:</p>
+<p>Note you can download this RStudio project with the code from <a href="https://github.com/agreenville/BIOL3009" target="_blank">GitHub</a> or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.</p>
+<p>Make sure you have a recent version of <a href="https://cran.rstudio.com/" target="_blank">R</a> <em>and</em> <a href="https://posit.co/download/rstudio-desktop/" target="_blank">RStudio</a> installed (they are not the same thing). You will also need to install the following packages:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment and run lines below to install packages if you don&#39;t have them:</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># # Package names</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># packages &lt;- c(&quot;ggplot2&quot;, &quot;camtrapR&quot;, &quot;lubridate&quot;, &quot;scales&quot;, &quot;dplyr&quot;, &quot;tibble&quot;, &quot;tidyr&quot;, &quot;vegan&quot;)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># packages &lt;- c(&quot;ggplot2&quot;, &quot;camtrapR&quot;, &quot;lubridate&quot;, &quot;scales&quot;, &quot;dplyr&quot;, &quot;tibble&quot;, &quot;tidyr&quot;, &quot;vegan&quot;, &quot;overlap&quot;)</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # Install packages not yet installed</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># installed_packages &lt;- packages %in% rownames(installed.packages())</span></span>
@@ -2442,14 +2442,15 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="task-1-download-and-explore-the-data">Task 1: Download and explore the data</h2>
 <p>There are two data sets supplied on Canvas with the 5 min threshold rule applied:</p>
 <ul>
-<li>Camera data as a <a href="https://canvas.sydney.edu.au/files/45129287/download?">RData file</a> (easiest to work with R)</li>
-<li>Camera data as <a href="https://canvas.sydney.edu.au/files/45129284/download?">csv files</a> (can be read into R or other software. Unzip the files to access the data).</li>
+<li>Camera data as a <a href="https://github.com/agreenville/BIOL3009/raw/refs/heads/main/data/2026/BIoL3009_WI_5min_data_2026.RData" target="_blank">RData file</a> (easiest to work with R)</li>
+<li>Camera data as <a href="https://github.com/agreenville/BIOL3009/blob/main/data/2026/BIOL3009_WI_5min_data_2026.csv" target="_blank">csv files-images</a> (can be read into R or other software).</li>
+<li>Camera data as <a href="https://github.com/agreenville/BIOL3009/blob/main/data/2026/Ctable.WI_2026.csv" target="_blank">csv files-ctable</a> (can be read into R or other software - If the file doesn’t automatically download click the download icon in the top right above the data).</li>
 </ul>
 <p>Download one of the options above.</p>
 <section id="metadata" class="level3">
 <h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
 <p>Read the metadata for the camera data. This will give you an understanding of what each column means.</p>
-<p><a href="https://canvas.sydney.edu.au/files/38823296/download">Data-Dictionary-for-Data-Download</a></p>
+<p><a href="https://github.com/agreenville/BIOL3009/blob/main/data/2026/Data-Dictionary-for-Data-Download.pdf" target="_blank">Data-Dictionary-for-Data-Download</a></p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2473,15 +2474,15 @@ Important
 <h2 class="anchored" data-anchor-id="task-3-exploring-the-data">Task 3: Exploring the data</h2>
 <section id="load-the-data-into-r." class="level3">
 <h3 class="anchored" data-anchor-id="load-the-data-into-r.">Load the data into R.</h3>
-<p>Here we are using the <code>.RData</code> file, but you could also use the <code>.csv</code> files, but there is an extra step - see below.</p>
+<p>Here we are using the <code>.RData</code> file, but you could also use the <code>.csv</code> files, but there is an extra step - see below. Note the code below assumes you have save the data into the <code>data/2026</code> folder in your RStudio project. Change the path to match where you saved the data.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/BIoL3009_WI_5min_data_2025.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/2026/BIoL3009_WI_5min_data_2026.RData&quot;</span>) <span class="co"># change filename and path match your dataset</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If you use the <code>.csv</code> files, you will need to read in the data and convert the date and time columns to a date-time object.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/BIOL3009_WI_5min_data_2024.csv&quot;, header = TRUE) # change filename and path match your dataset</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min &lt;- read.csv(&quot;data/2026/BIOL3009_WI_5min_data_2026.csv&quot;, header = TRUE) # change filename and path match your dataset</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># records_filter5_min$DateTimeOriginal &lt;- as.POSIXct(strptime(records_filter5_min$timestamp, format =</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                                        &quot;%Y-%m-%d %H:%M:%S&quot;, tz = &quot;UTC&quot;))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2490,7 +2491,7 @@ Important
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Uncomment to run if using the .csv file</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/Ctable.WI_2024.csv&quot;, header = TRUE) # change file path to match whwre you saved the file.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ctable.WI &lt;- read.csv(&quot;data/2026/Ctable.WI_2026.csv&quot;, header = TRUE) # change file path to match whwre you saved the file.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -2503,7 +2504,7 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>We are going to use the power of the CamTrapR package to summarise the camera data. This will allow us to calculate the number of days each camera was operational, the number of images per species per camera, and the survey effort for each camera.</p>
-<p>For more information on the CamTrapR package, see the <a href="https://cran.r-project.org/web/packages/camtrapR/camtrapR.pdf">documentation</a>.</p>
+<p>For more information on the CamTrapR package, see the <a href="https://cran.r-project.org/web/packages/camtrapR/camtrapR.pdf" target="_blank">documentation</a>.</p>
 </div>
 </div>
 </section>
@@ -2727,7 +2728,7 @@ Note
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">width=</span>.<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">60</span>, <span class="at">hjust=</span><span class="dv">1</span>), <span class="at">axis.title.x=</span><span class="fu">element_blank</span>()) <span class="sc">+</span>  </span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">17</span>), <span class="at">oob =</span> rescale_none)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">20</span>), <span class="at">oob =</span> rescale_none)</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>overall.site.means</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
