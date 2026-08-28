@@ -363,10 +363,11 @@ head(species.count.treatments)
 
 ```{r, fig.width=16, fig.height=14}
 overall.treatment.means <- species.count.treatments %>%
-  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +          geom_col(position=position_dodge())+ 
-   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
-    theme_classic() + 
-    facet_wrap(~common_name, scales = "free") +
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +
+  geom_col(position=position_dodge()) + 
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+  theme_classic() + 
+  facet_wrap(~common_name, scales = "free") +
   xlab("")
 
 
@@ -401,10 +402,11 @@ speciesToPlot <- c("Rattus Species", "Antechinus Species", "Swamp Wallaby", "Com
 
 overall.treatment.means.sel <- species.count.treatments %>%
   filter(common_name %in% speciesToPlot) %>% 
-  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +          geom_col(position=position_dodge())+ 
-   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
-    theme_classic() + 
-    facet_wrap(~common_name, scales = "free") +
+  ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +
+  geom_col(position=position_dodge()) + 
+  geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+  theme_classic() + 
+  facet_wrap(~common_name, scales = "free") +
   xlab("")
 
 overall.treatment.means.sel
@@ -579,7 +581,7 @@ species.diversity.simpson.plot <- Simpson.mean %>%
   geom_col(position=position_dodge()) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), color="black", width=.5, position = position_dodge(width = 0.9))+ 
   theme_classic() + ylab("Simpson's diversity index") + xlab("")+
- scale_y_continuous(expand = c(0, 0))
+  scale_y_continuous(expand = c(0, 0))
 
 species.diversity.simpson.plot
 
@@ -618,6 +620,7 @@ Shannon.mean <- shannon %>%
   left_join(treatments, by = "subproject_name") %>%
   group_by(Treatment) %>%
   summarise(mean = mean(Shannon, na.rm = TRUE), se = se(Shannon))
+
 ```
 
 
@@ -649,6 +652,7 @@ species.diversity.plot <- Shannon.mean %>%
   scale_y_continuous(expand = c(0, 0))
 
 species.diversity.plot
+
 ```
 
 To save plot out uncomment the below line:
@@ -695,6 +699,7 @@ t.test(RAI ~ Treatment, data = swampy, var.equal = TRUE)
 
 
 ```
+
 Note we should test our assumption for the t-test that the data should be normally distributed:
 
 ```{r}
@@ -702,10 +707,14 @@ Note we should test our assumption for the t-test that the data should be normal
 shapiro.test(swampy$RAI)
 
 ```
+
+
 and our groups should have equal variance:
+
 ```{r}
 bartlett.test(RAI ~ Treatment, data = swampy)
 ```
+
 If they are not normally distributed, we can use a non-parametric test instead, such as the Wilcoxon rank sum test (`wilcox.test()` function) or transform the data. If the groups do not have equal variance, we can try transformation or use a Welch's t-test instead (set `var.equal = FALSE`).
 
 Lets try the `log+1` transformation and see if that helps with the normality assumption:
@@ -714,6 +723,8 @@ Lets try the `log+1` transformation and see if that helps with the normality ass
 shapiro.test(log(swampy$RAI + 1))
 
 ```
+
+
 Equal variance test:
 ```{r}
 bartlett.test(log(RAI + 1) ~ Treatment, data = swampy)
