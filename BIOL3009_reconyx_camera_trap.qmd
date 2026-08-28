@@ -198,14 +198,18 @@ unique(records_filter5_min$common_name)
 
 **Example code to combine groups:**
 
-Uncomment the code below, if needed, and replace species names/group with your own
+Uncomment the code below, if needed, and replace species names/group with your own. Note the names are `old name = new name`. You can add as many species as you want to combine into a single group.
 
 ```{r}
 
 records_filter5_min$common_name <- recode(records_filter5_min$common_name,
                                           "Rodent" = "Rattus Species")
+records_filter5_min$common_name <- recode(records_filter5_min$common_name,
+                                          "Bush Rat" = "Rattus Species")
+records_filter5_min$common_name <- recode(records_filter5_min$common_name,
+                                          "Brown Antechinus" = "Antechinus Species")
 
-
+unique(records_filter5_min$common_name)
 ```
 
 **Remove groups not needed:**
@@ -220,7 +224,11 @@ records_filter5_min <- records_filter5_min %>%
   filter(common_name != "Animal") %>%
   filter(common_name != "Bird") %>%
   filter(common_name != "Mammal") %>%
-  filter(common_name != "Insect")
+  filter(common_name != "Insect") %>%
+  filter(common_name != "No CV Result") %>%
+  filter(common_name != "Unknown")
+
+unique(records_filter5_min$common_name)
 
 ```
 
@@ -303,7 +311,7 @@ treatments
 species.count.effort <- left_join(species.count.complete, effort, by = "placename") %>%
   mutate(RAI = n/days*3) %>%
   group_by(subproject_name, common_name) %>%
-  summarise(across(where(is.numeric), list(mean = mean, se = se))) %>%
+  summarise(across(where(is.numeric), list(mean = ~mean(.x, na.rm = TRUE), se = se))) %>%
   dplyr::select(-days_se) %>%
   rename(mean = n_mean, days = days_mean, se_mean = n_se) %>%
   # add treatments
@@ -336,7 +344,7 @@ overall.site.means
 
 #### All species/groups
 
-Calculate the mean RAI and SE per treatment:
+Calculate the mean RAI and SE per treatment. We are using each camera trap as a replicate here, but you could also use the mean RAI per site as a replicate instead of each camera, but then we have very few replicates:
 
 ```{r}
 species.count.treatments <- left_join(species.count.complete, effort, by = "placename") %>%
@@ -344,12 +352,12 @@ species.count.treatments <- left_join(species.count.complete, effort, by = "plac
   # add treatments
   left_join(treatments, by = "subproject_name") %>%
   group_by(Treatment, common_name) %>%
-  summarise(across(where(is.numeric), list(mean = mean, se = se))) %>%
+  summarise(across(where(is.numeric), list(mean = ~mean(.x, na.rm = TRUE), se = se))) %>%
   dplyr::select(-days_se) %>%
   rename(mean = n_mean, days = days_mean, se_mean = n_se)
   
 
-glimpse(species.count.treatments)
+head(species.count.treatments)
 ```
 
 
@@ -385,7 +393,7 @@ Add of remove species common names to choose what you want to plot.
 
 ```{r}
 
-speciesToPlot <- c("Rattus Species", "Antechinus Species", "Long-nosed Bandicoot", "Common Brushtail Possum")
+speciesToPlot <- c("Rattus Species", "Antechinus Species", "Swamp Wallaby", "Common Brushtail Possum")
 
 ```
 
@@ -406,13 +414,32 @@ To save plot out uncomment the below line
 
 ```{r}
 
-# ggsave(plot = species.site.means , "output/BIOL3009_RAI_Species.png", width = 12, height = 7)
+# ggsave(plot = overall.treatment.means.sel, "output/BIOL3009_RAI_Species.png", width = 12, height = 7)
 
 ```
 
+To save out dataset for further statistical analysis, uncomment the below line. Note that here we keep each camera as a row (camera trap = replicate), matching the RAI plots above and the t-test below (change file path to suit your computer):
+
+```{r}
+
+species.RAI.data <- left_join(species.count.complete, effort, by = "placename") %>%
+  mutate(RAI = n/days*3) %>%
+  # add treatments
+  left_join(treatments, by = "subproject_name")
+
+head(species.RAI.data)
+
+
+# write.csv(species.RAI.data, "output/BIOL3009_RAI_Species.csv", row.names = FALSE)
+```
+
+
+
 ### Species richness per treatment, with site as replicate.
 
-Here we will calculate mean species richness per treatment and use each site as a replicate. We will first calculate the number of distinct species per site, then calculate the mean and standard error per treatment.
+Here we will calculate mean species richness per treatment and use each site as a replicate, rather than each camera trap as we did for RAI. You could use each camera trap as a replicate, but the number of different species on the one camera may be very low.  
+
+We will first calculate the number of distinct species per site, then calculate the mean and standard error per treatment.
 
 ```{r}
 
@@ -424,10 +451,31 @@ sp.richness <- species.count %>%
   summarise(n = n_distinct(common_name)) %>% 
   rename(., speciesRichness = n) %>% 
   # Calculate mean and standard error per treatment
-  group_by(Treatment) %>% 
-  summarise(mean = mean(speciesRichness), se = se(speciesRichness))
+  group_by(Treatment) %>%
+  summarise(mean = mean(speciesRichness, na.rm = TRUE), se = se(speciesRichness))
 
 ```
+
+To save out dataset for further statistical analysis for species richness, uncomment the below line (change file path to suit your computer)
+
+```{r}
+species.richness.dataframe <- species.count %>% 
+  # Add treatments
+  left_join(treatments, by = "subproject_name") %>%
+  group_by(Treatment, subproject_name) %>% 
+  # Count number of distinct species per site
+  summarise(n = n_distinct(common_name)) %>% 
+  rename(., speciesRichness = n) %>% 
+  # Calculate mean and standard error per treatment
+  group_by(Treatment)
+
+head(species.richness.dataframe)
+
+#write.csv(species.richness.dataframe, "output/BIOL3009_SpeciesRichness.csv", row.names = FALSE)
+
+```
+
+
 
 #### Plotting mean species richness per treatment
 
@@ -506,10 +554,20 @@ Simpson <- species.count.wide %>%
 Simpson.mean <- Simpson %>%
   left_join(treatments, by = "subproject_name") %>%
   group_by(Treatment) %>%
-  summarise(mean = mean(Simpson), se = se(Simpson))
+  summarise(mean = mean(Simpson, na.rm = TRUE), se = se(Simpson))
 
 ```
 
+To save out csv file of Simpson's Diversity dataframe for further statistical analysis, uncomment the below:
+
+```{r}
+simpson.dataframe <- Simpson %>%
+  left_join(treatments, by = "subproject_name")
+
+#write.csv(simpson.dataframe, "output/BIOL3009_SimpsonDiversity.csv", row.names = FALSE)
+
+
+```
 
 
 #### Plotting Simpson's diversity index
@@ -546,7 +604,7 @@ where $p_i$ is the proportion of species $i$ in the community and $N$ is the num
 We can calculate this index for each site and take the mean for each treatment and plot the results, as we did above for the Simpson's index.
 
 ```{r}
-# calculate Simpson's diversity index per site
+# calculate shannon's diversity index per site
 shannon <- species.count.wide %>%
   group_by(subproject_name) %>%
   summarise(across(everything(), \(x) sum(x, na.rm = TRUE))) %>%
@@ -554,13 +612,28 @@ shannon <- species.count.wide %>%
   mutate(Shannon = diversity(select(., -subproject_name), index = "shannon")) %>%
   select(subproject_name, Shannon)
 
-# calc mean Simpson's Diversity index and standard error per treatment
+# calc mean shannon's Diversity index and standard error per treatment
 
 Shannon.mean <- shannon %>%
   left_join(treatments, by = "subproject_name") %>%
   group_by(Treatment) %>%
-  summarise(mean = mean(Shannon), se = se(Shannon))
+  summarise(mean = mean(Shannon, na.rm = TRUE), se = se(Shannon))
 ```
+
+
+Uncomment out code below to save a csv with the Shannon's Diversity index per site for further analysis:
+```{r}
+
+shannon.diversity.dataframe <- shannon %>%
+  left_join(treatments, by = "subproject_name") %>%
+  rename(Site = subproject_name)
+
+#write.csv(shannon.diversity.dataframe, "output/BIOL3009_shannon_data.csv", row.names = FALSE)
+
+```
+
+
+
 
 #### Plotting Shannon's diversity index
 
@@ -586,6 +659,73 @@ To save plot out uncomment the below line:
 
 ```
 
+
+## Example analysis in R
+### t-test: a test if two means differ
+
+Here we will use the activity data for swamp wallaby, but the process is the same for other species.
+
+**Aim: To determine if there is a difference in the mean relative activity index (RAI) for swamp wallabies between older regrowth and younger regrowth.**
+
+As a reminder, here is the plot we made above, for our wallaby:
+
+```{r}
+
+swamp_wall.treatment.means <- species.count.treatments %>%
+  filter(common_name == "Swamp Wallaby") %>% 
+  ggplot(aes(common_name, RAI_mean, colour=Treatment, fill=Treatment)) +              geom_col(position=position_dodge())+ 
+   geom_errorbar(aes(ymin=RAI_mean-RAI_se, ymax=RAI_mean+RAI_se), color="black", width=.5, position = position_dodge(width = 0.9)) + 
+    theme_classic() +
+  xlab("")
+
+swamp_wall.treatment.means
+
+```
+
+Now lets do the t-test. Note that `var.equal = TRUE` means treat the two variances as being equal (i.e. assumption of equal variance is met):
+```{r}
+# First filter the data frame we made above for the swamp wallaby
+
+swampy <- species.RAI.data %>%
+  filter(common_name == "Swamp Wallaby")
+
+# Now we can run our t-test. We are using the RAI from each camera, so each camera trap is our replicate here to match the plots above for RAI. Think about if this is appropriate for your data set and species. If you have multiple cameras per site, then you may want to use the mean RAI per site as your replicate instead of each camera, but then we have very few replicates.
+
+t.test(RAI ~ Treatment, data = swampy, var.equal = TRUE)
+
+
+```
+Note we should test our assumption for the t-test that the data should be normally distributed:
+
+```{r}
+
+shapiro.test(swampy$RAI)
+
+```
+and our groups should have equal variance:
+```{r}
+bartlett.test(RAI ~ Treatment, data = swampy)
+```
+If they are not normally distributed, we can use a non-parametric test instead, such as the Wilcoxon rank sum test (`wilcox.test()` function) or transform the data. If the groups do not have equal variance, we can try transformation or use a Welch's t-test instead (set `var.equal = FALSE`).
+
+Lets try the `log+1` transformation and see if that helps with the normality assumption:
+```{r}
+
+shapiro.test(log(swampy$RAI + 1))
+
+```
+Equal variance test:
+```{r}
+bartlett.test(log(RAI + 1) ~ Treatment, data = swampy)
+```
+
+If the transformation does not help, we can use a non-parametric test instead, such as the Wilcoxon rank sum test (`wilcox.test()` function).
+```{r}
+wilcox.test(RAI ~ Treatment, data = swampy)
+```
+
+
+
 ## Task 6 (optional): Detection maps
 
 Detection maps are a useful way to visualise the distribution of species across your study area. They can be used to identify areas of high and low species richness, and to identify areas where certain species are more or less likely to be detected.
@@ -599,7 +739,8 @@ detectionMaps(CTtable = Ctable.WI,
               #speciesToShow = "Swamp Wallaby", 
               stationCol = "placename", 
               speciesCol = "common_name", 
-              writePNG = FALSE, 
+              writePNG = FALSE,               # change this to TRUE if you want to save the plots as PNG files
+              plotDirectory = "output/",      # change this to your desired output directory to save plots
               plotR = TRUE, 
               printLabels = FALSE, 
               richnessPlot = TRUE, 
@@ -631,8 +772,8 @@ Change the species names to match your data set and the species you want to plot
 activityDensity(recordTable = records_filter5_min, 
                 speciesCol = "common_name", 
                 allSpecies = TRUE, 
-                writePNG = FALSE, 
-                plotDirectory = "output/", 
+                writePNG = FALSE,            # change this to TRUE if you want to save the plots as PNG files
+                plotDirectory = "output/",  # change this to your desired output directory to save plots
                 plotR = TRUE, 
                 recordDateTimeCol = "DateTimeOriginal", 
                 recordDateTimeFormat = "ymd HMS", 
@@ -641,7 +782,8 @@ activityDensity(recordTable = records_filter5_min,
 activityRadial(recordTable = records_filter5_min, 
                speciesCol = "common_name", 
                allSpecies = TRUE, 
-               writePNG = FALSE, 
+               writePNG = FALSE,            # change this to TRUE if you want to save the plots as PNG files
+               plotDirectory = "output/",   # change this to your desired output directory to save plots
                plotR = TRUE, 
                recordDateTimeCol = "DateTimeOriginal", 
                recordDateTimeFormat = "ymd HMS", 
@@ -649,11 +791,11 @@ activityRadial(recordTable = records_filter5_min,
 
 activityOverlap(recordTable = records_filter5_min, 
                 speciesCol = "common_name", 
-                speciesA = "Rattus Species", # change species names to match your data set 
+                speciesA = "Rattus Species",     # change species names to match your data set 
                 speciesB = "Antechinus Species", # change species names to match your data set
                 legendPosition = "topleft", 
-                writePNG = FALSE, 
-                plotDirectory = "output/", 
+                writePNG = FALSE,                # change this to TRUE if you want to save the plots as PNG files
+                plotDirectory = "output/",       # change this to your desired output directory to save plots
                 plotR = TRUE)
 
 ```
