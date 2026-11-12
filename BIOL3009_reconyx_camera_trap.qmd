@@ -13,6 +13,8 @@ execute:
   eval: false # uncomment to disable code execution and make worksheet
 ---
 
+![Overall workflow from field to analysis](images/camera_trap_flowchart.png)
+
 ## Prerequisites: Install and load packages
 
 Note you can download this RStudio project with the code from [GitHub](https://github.com/agreenville/BIOL3009){target="_blank"} or copy and paste the code below into a new R script/RMarkdown/Quarto doc in RStudio.
@@ -46,9 +48,9 @@ library(tidyr)
 
 There are two data sets supplied on Canvas with the 5 min threshold rule applied:
 
--   Camera data as a [RData file](https://github.com/agreenville/BIOL3009/raw/refs/heads/main/data/2026/BIoL3009_WI_5min_data_2026.RData){target="_blank"} (easiest to work with R)
--   Camera data as [csv files-images](https://github.com/agreenville/BIOL3009/blob/main/data/2026/BIOL3009_WI_5min_data_2026.csv){target="_blank"} (can be read into R or other software).
--  Camera data as [csv files-ctable](https://github.com/agreenville/BIOL3009/blob/main/data/2026/Ctable.WI_2026.csv){target="_blank"} (can be read into R or other software - If the file doesn't automatically download click the download icon in the top right above the data).
+- Camera data as a [RData file](https://github.com/agreenville/BIOL3009/raw/refs/heads/main/data/2026/BIoL3009_WI_5min_data_2026.RData){target="_blank"} (easiest to work with R)
+- Camera data as [csv files-images](https://github.com/agreenville/BIOL3009/blob/main/data/2026/BIOL3009_WI_5min_data_2026.csv){target="_blank"} (can be read into R or other software).
+- Camera data as [csv files-ctable](https://github.com/agreenville/BIOL3009/blob/main/data/2026/Ctable.WI_2026.csv){target="_blank"} (can be read into R or other software - If the file doesn't automatically download click the download icon in the top right above the data).
 
 Download one of the options above.
 
@@ -148,11 +150,11 @@ report <- surveyReport(recordTable          = records_filter5_min,
 
 The report is list of five different data frames/tables:
 
--   events_by_species
--   events_by_station2
--   events_by_station
--   survey_dates
--   species_by_station
+- events_by_species
+- events_by_station2
+- events_by_station
+- survey_dates
+- species_by_station
 
 ::: callout-tip
 To make it easier to see each table, subset each separately. Replace `events_by_species` with the name of the table you want to view.
@@ -214,7 +216,7 @@ unique(records_filter5_min$common_name)
 
 **Remove groups not needed:**
 
-Example code below to remore groups not needed. Replace species names/group with your own.  
+Example code below to remore groups not needed. Replace species names/group with your own.
 
 ```{r}
 
@@ -284,18 +286,15 @@ species.count.complete <- species.count %>%
 Then add effort and calculate the mean RAI and SE per site.
 
 ::: callout-note
-
 Note the code above is using each camera per site to calculate the mean, but are they independent?
-
 :::
-  
-  
-  
-#### **Add vector with treatments for each site**  
-  
+
+#### **Add vector with treatments for each site**
+
 We need to add a vector with the treatments for each site. This will allow us to compare the mean activity per treatment.
 
 Update the code below to match your sites and treatments. The example below assumes you have four sites with two new and two old treatments.
+
 ```{r}
 
 treatments <- data.frame(subproject_name = c("Site_01", "Site_02", "Site_03", "Site_04", "Site_05"),
@@ -304,7 +303,6 @@ treatments <- data.frame(subproject_name = c("Site_01", "Site_02", "Site_03", "S
 treatments
 
 ```
-
 
 ```{r}
 
@@ -360,7 +358,6 @@ species.count.treatments <- left_join(species.count.complete, effort, by = "plac
 head(species.count.treatments)
 ```
 
-
 ```{r, fig.width=16, fig.height=14}
 overall.treatment.means <- species.count.treatments %>%
   ggplot(aes(reorder(common_name, -RAI_mean), RAI_mean, colour=Treatment, fill=Treatment)) +
@@ -374,10 +371,6 @@ overall.treatment.means <- species.count.treatments %>%
 
 overall.treatment.means
 ```
-
-
-
-
 
 To save plot out uncomment the below line. Change the filename to your own.:
 
@@ -435,11 +428,9 @@ head(species.RAI.data)
 # write.csv(species.RAI.data, "output/BIOL3009_RAI_Species.csv", row.names = FALSE)
 ```
 
-
-
 ### Species richness per treatment, with site as replicate.
 
-Here we will calculate mean species richness per treatment and use each site as a replicate, rather than each camera trap as we did for RAI. You could use each camera trap as a replicate, but the number of different species on the one camera may be very low.  
+Here we will calculate mean species richness per treatment and use each site as a replicate, rather than each camera trap as we did for RAI. You could use each camera trap as a replicate, but the number of different species on the one camera may be very low.
 
 We will first calculate the number of distinct species per site, then calculate the mean and standard error per treatment.
 
@@ -476,8 +467,6 @@ head(species.richness.dataframe)
 #write.csv(species.richness.dataframe, "output/BIOL3009_SpeciesRichness.csv", row.names = FALSE)
 
 ```
-
-
 
 #### Plotting mean species richness per treatment
 
@@ -539,7 +528,6 @@ species.count.wide <- records_filter5_min %>%
 
 ```
 
-
 Now we can calculate the Simpson's diversity index for each site. We will group by site and then use the `diversity` function from the `vegan` package to calculate the index.
 
 ```{r}
@@ -570,7 +558,6 @@ simpson.dataframe <- Simpson %>%
 
 
 ```
-
 
 #### Plotting Simpson's diversity index
 
@@ -623,8 +610,8 @@ Shannon.mean <- shannon %>%
 
 ```
 
-
 Uncomment out code below to save a csv with the Shannon's Diversity index per site for further analysis:
+
 ```{r}
 
 shannon.diversity.dataframe <- shannon %>%
@@ -634,9 +621,6 @@ shannon.diversity.dataframe <- shannon %>%
 #write.csv(shannon.diversity.dataframe, "output/BIOL3009_shannon_data.csv", row.names = FALSE)
 
 ```
-
-
-
 
 #### Plotting Shannon's diversity index
 
@@ -663,8 +647,8 @@ To save plot out uncomment the below line:
 
 ```
 
-
 ## Example analysis in R
+
 ### t-test: a test if two means differ
 
 Here we will use the activity data for swamp wallaby, but the process is the same for other species.
@@ -687,6 +671,7 @@ swamp_wall.treatment.means
 ```
 
 Now lets do the t-test. Note that `var.equal = TRUE` means treat the two variances as being equal (i.e. assumption of equal variance is met):
+
 ```{r}
 # First filter the data frame we made above for the swamp wallaby
 
@@ -708,7 +693,6 @@ shapiro.test(swampy$RAI)
 
 ```
 
-
 and our groups should have equal variance:
 
 ```{r}
@@ -718,24 +702,24 @@ bartlett.test(RAI ~ Treatment, data = swampy)
 If they are not normally distributed, we can use a non-parametric test instead, such as the Wilcoxon rank sum test (`wilcox.test()` function) or transform the data. If the groups do not have equal variance, we can try transformation or use a Welch's t-test instead (set `var.equal = FALSE`).
 
 Lets try the `log+1` transformation and see if that helps with the normality assumption:
+
 ```{r}
 
 shapiro.test(log(swampy$RAI + 1))
 
 ```
 
-
 Equal variance test:
+
 ```{r}
 bartlett.test(log(RAI + 1) ~ Treatment, data = swampy)
 ```
 
 If the transformation does not help, we can use a non-parametric test instead, such as the Wilcoxon rank sum test (`wilcox.test()` function).
+
 ```{r}
 wilcox.test(RAI ~ Treatment, data = swampy)
 ```
-
-
 
 ## Task 6 (optional): Detection maps
 
