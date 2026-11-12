@@ -4,6 +4,8 @@
 Companion information and R scripts for BIOL3009 Terrestrial Field Ecology.\
 Aaron Greenville ([aaron.greenville\@sydney.edu.au](mailto:aaron.greenville@sydney.edu.au))
 
+![Workflow for processing camera trap data.](images/camera_trap_workflow.gif)
+
 ## Overview
 
 Our overall aim for the unit is to understand the variation of vegetation and animals of the Chichester State Forest in relation to forestry management — in particular, time since harvest — as well as geology, altitude, topography and other site factors.
